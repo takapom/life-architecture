@@ -1,24 +1,36 @@
 {
   "version": "1.0",
-  "updatedAt": "2026-03-27T03:28:55.671Z",
+  "updatedAt": "2026-03-27T07:57:41.217Z",
   "skills": {
     "ui-ux-pro-max": {
       "count": 1,
       "lastUsed": "2026-03-27T02:08:48.044Z"
+    },
+    "harness-work": {
+      "count": 1,
+      "lastUsed": "2026-03-27T04:37:52.362Z"
     }
   },
   "commands": {
     "Users/takagiyuuki/life-architecture/docs": {
       "count": 2,
       "lastUsed": "2026-03-27T02:05:18.861Z"
+    },
+    "harness-work": {
+      "count": 1,
+      "lastUsed": "2026-03-27T04:18:14.242Z"
+    },
+    "harness-plan": {
+      "count": 1,
+      "lastUsed": "2026-03-27T04:18:43.055Z"
     }
   },
   "agents": {},
   "hooks": {
     "session-init": {
-      "triggered": 9,
+      "triggered": 11,
       "blocked": 0,
-      "lastTriggered": "2026-03-27T03:28:55.671Z"
+      "lastTriggered": "2026-03-27T07:57:41.217Z"
     }
   }
 }

@@ -135,3 +135,24 @@
 - （必要に応じて追記）
 
 ---
+
+## セッション: 2026-03-27T08:00:23Z
+
+- session_id: `5ED8CDC2-72CD-4547-8744-61B3FF50B838`
+- project: `life-architecture`
+- branch: `main`
+- started_at: `2026-03-27T07:56:48Z`
+- ended_at: `2026-03-27T08:00:23Z`
+- duration_minutes: 543
+- changes: 1
+
+### 変更ファイル
+- `src/modules/diagnosis/DiagnosisFlow.tsx`
+
+### 重要な変更（important=true）
+- （なし）
+
+### 次回への引き継ぎ（任意）
+- （必要に応じて追記）
+
+---
