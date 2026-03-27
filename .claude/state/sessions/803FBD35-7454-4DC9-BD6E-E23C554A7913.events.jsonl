@@ -1,0 +1,15 @@
+{"id":"event-000001","type":"session.start","ts":"2026-03-26T09:22:03Z","state":"initialized"}
+{"id":"event-000002","type":"session.resume","ts":"2026-03-26T09:24:55Z","state":"initialized"}
+{"id":"event-000003","type":"session.stop","ts":"2026-03-26T09:25:42Z","state":"stopped"}
+{"type":"session.resume","ts":"2026-03-27T01:35:19Z","state":"initialized","data":{"cc_session_id":"69d9dd70-a2a3-44f9-ac9a-98ae38ee3dc9","method":"mapping"}}
+{"id":"event-000001","type":"session.start","ts":"2026-03-27T01:35:19Z","state":"initialized"}
+{"id":"event-000002","type":"session.stop","ts":"2026-03-27T01:35:44Z","state":"stopped"}
+{"id":"event-000003","type":"tool.write","ts":"2026-03-27T01:46:08Z","state":"stopped","data":{"file_path":"/Users/takagiyuuki/life-architecture/docs/database.md"}}
+{"id":"event-000004","type":"tool.edit","ts":"2026-03-27T01:47:28Z","state":"stopped","data":{"file_path":"/Users/takagiyuuki/life-architecture/README.md"}}
+{"id":"event-000005","type":"tool.edit","ts":"2026-03-27T01:48:09Z","state":"stopped","data":{"file_path":"/Users/takagiyuuki/life-architecture/docs/database.md"}}
+{"id":"event-000006","type":"tool.write","ts":"2026-03-27T01:51:50Z","state":"stopped","data":{"file_path":"/Users/takagiyuuki/life-architecture/docs/architecture.md"}}
+{"id":"event-000007","type":"tool.write","ts":"2026-03-27T02:00:37Z","state":"stopped","data":{"file_path":"/Users/takagiyuuki/life-architecture/docs/database.md"}}
+{"id":"event-000001","type":"session.start","ts":"2026-03-27T02:04:18Z","state":"initialized"}
+{"id":"event-000002","type":"tool.bash","ts":"2026-03-27T02:05:23Z","state":"initialized","data":{"command":"ls /Users/takagiyuuki/life-architecture/docs/"}}
+{"id":"event-000003","type":"tool.write","ts":"2026-03-27T02:05:24Z","state":"initialized","data":{"file_path":"/Users/takagiyuuki/life-architecture/docs/database.md"}}
+{"id":"event-000004","type":"session.stop","ts":"2026-03-27T02:05:28Z","state":"stopped"}

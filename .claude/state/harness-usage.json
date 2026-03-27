@@ -1,14 +1,24 @@
 {
   "version": "1.0",
-  "updatedAt": "2026-03-27T01:34:34.094Z",
-  "skills": {},
-  "commands": {},
+  "updatedAt": "2026-03-27T03:28:55.671Z",
+  "skills": {
+    "ui-ux-pro-max": {
+      "count": 1,
+      "lastUsed": "2026-03-27T02:08:48.044Z"
+    }
+  },
+  "commands": {
+    "Users/takagiyuuki/life-architecture/docs": {
+      "count": 2,
+      "lastUsed": "2026-03-27T02:05:18.861Z"
+    }
+  },
   "agents": {},
   "hooks": {
     "session-init": {
-      "triggered": 4,
+      "triggered": 9,
       "blocked": 0,
-      "lastTriggered": "2026-03-27T01:34:34.094Z"
+      "lastTriggered": "2026-03-27T03:28:55.671Z"
     }
   }
 }
