@@ -1,0 +1,44 @@
+{
+  "session_id": "675D591C-149D-445D-90BD-9EB213D70702",
+  "parent_session_id": null,
+  "state": "stopped",
+  "state_version": 1,
+  "started_at": "2026-03-27T01:04:04Z",
+  "updated_at": "2026-03-27T01:29:00Z",
+  "resume_token": "6D75B4CD-B916-4320-96CD-9372D24AB925",
+  "event_seq": 3,
+  "last_event_id": "event-000003",
+  "fork_count": 0,
+  "orchestration": {
+    "max_state_retries": 3,
+    "retry_backoff_seconds": 10
+  },
+  "cwd": "/Users/takagiyuuki/life-architecture",
+  "project_name": "life-architecture",
+  "prompt_seq": 1,
+  "git": {
+    "branch": "main",
+    "uncommitted_changes": 1,
+    "last_commit": "6147466"
+  },
+  "plans": {
+    "exists": false,
+    "last_modified": 0,
+    "wip_tasks": 0,
+    "todo_tasks": 0,
+    "pending_tasks": 0,
+    "completed_tasks": 0
+  },
+  "changes_this_session": [
+    {
+      "file": "CLAUDE.md",
+      "action": "Write",
+      "timestamp": "2026-03-27T01:28:53Z",
+      "important": true
+    }
+  ],
+  "intent": "literal",
+  "ended_at": "2026-03-27T01:29:00Z",
+  "duration_minutes": 564,
+  "memory_logged": true
+}

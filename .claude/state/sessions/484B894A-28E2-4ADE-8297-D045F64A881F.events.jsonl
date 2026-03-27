@@ -1,0 +1,11 @@
+{"id":"event-000001","type":"session.start","ts":"2026-03-26T09:22:03Z","state":"initialized"}
+{"id":"event-000002","type":"session.resume","ts":"2026-03-26T09:24:55Z","state":"initialized"}
+{"id":"event-000003","type":"session.stop","ts":"2026-03-26T09:25:42Z","state":"stopped"}
+{"type":"session.resume","ts":"2026-03-27T01:04:04Z","state":"initialized","data":{"cc_session_id":"69d9dd70-a2a3-44f9-ac9a-98ae38ee3dc9","method":"mapping"}}
+{"id":"event-000001","type":"session.start","ts":"2026-03-27T01:04:04Z","state":"initialized"}
+{"id":"event-000002","type":"tool.write","ts":"2026-03-27T01:28:53Z","state":"initialized","data":{"file_path":"/Users/takagiyuuki/life-architecture/CLAUDE.md"}}
+{"id":"event-000003","type":"session.stop","ts":"2026-03-27T01:29:00Z","state":"stopped"}
+{"type":"session.resume","ts":"2026-03-27T01:34:26Z","state":"initialized","data":{"cc_session_id":"bbc04c05-d563-4f8f-92fa-1363c8f99cf1","method":"latest"}}
+{"id":"event-000001","type":"session.start","ts":"2026-03-27T01:34:26Z","state":"initialized"}
+{"id":"event-000002","type":"session.resume","ts":"2026-03-27T01:34:34Z","state":"initialized"}
+{"id":"event-000003","type":"session.stop","ts":"2026-03-27T01:34:48Z","state":"stopped"}
