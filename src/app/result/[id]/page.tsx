@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getOptionalUser } from "@/lib/supabase/server";
 import ResultView from "@/modules/result/ResultView";
 
 interface Props {
@@ -32,9 +32,7 @@ export default async function ResultPage({ params }: Props) {
     notFound();
   }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getOptionalUser();
 
   return (
     <ResultView

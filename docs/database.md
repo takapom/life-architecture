@@ -63,7 +63,7 @@ AIが生成した診断結果。`diagnosis_id` にUNIQUE制約で1:1を保証。
 | architecture_name | TEXT | NOT NULL | 例: `Tennis-Centric Monolith` |
 | description | TEXT | NOT NULL | AIによるメタファー解説 |
 | scores | JSONB | NOT NULL | `{"throughput": 80, "deploy_freq": 60, "fault_tolerance": 70, "observability": 55, "tech_debt": 40, "coupling": 90}` |
-| diagram_data | JSONB | NOT NULL | React Flow の nodes / edges |
+| diagram_data | JSONB | NOT NULL | 静的フローボード用の nodes / edges と代表アクセスフロー |
 | created_at | TIMESTAMPTZ | NOT NULL DEFAULT now() | |
 
 ---
@@ -106,4 +106,4 @@ diagnoses INSERT + diagnosis_results INSERT（トランザクション）
 - **AI 失敗時のリトライ方針**: 回答は `sessionStorage` に保持し、失敗時はクライアントから再送する。DBに中間状態を持たせない
 - **`answers` をJSONBにした理由**: 質問は8問固定で個別クエリ不要。正規化のメリットがない
 - **`diagnosis_results` を別テーブルにした理由**: 診断セッションとAI生成結果のライフサイクルを分離するため
-- **`diagram_data` をJSONBにした理由**: React FlowのノードとエッジはそのままJSONで保持するのが最もシンプル
+- **`diagram_data` をJSONBにした理由**: ノード・エッジに加え、代表アクセスフロー (`flows`) もまとめて保持でき、描画実装を差し替えてもデータ形を維持できるため

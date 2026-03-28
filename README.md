@@ -10,7 +10,7 @@
 |---------|------|
 | フロントエンド | Next.js 15 (App Router) |
 | スタイリング | Tailwind CSS + shadcn/ui |
-| アーキテクチャ図 | React Flow |
+| アーキテクチャ図 | カスタム静的フローボード |
 | チャート | Recharts |
 | DB / Auth | Supabase（GitHub認証） |
 | AIエージェント | Mastra |

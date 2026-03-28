@@ -50,9 +50,29 @@ export interface DiagramEdge {
   label?: string;
 }
 
+export interface DiagramFlowStep {
+  node_id: string;
+  title: string;
+  detail: string;
+}
+
+export interface DiagramFlow {
+  id: string;
+  access: string;
+  summary: string;
+  steps: DiagramFlowStep[];
+}
+
+export interface DiagramOverview {
+  headline: string;
+  composition: string;
+}
+
 export interface DiagramData {
   nodes: DiagramNode[];
   edges: DiagramEdge[];
+  flows?: DiagramFlow[];
+  overview?: DiagramOverview;
 }
 
 export interface DiagnosisResult {

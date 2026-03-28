@@ -1,13 +1,13 @@
 {
-  "session_id": "5ED8CDC2-72CD-4547-8744-61B3FF50B838",
+  "session_id": "FC040C2A-AC7E-43F6-9485-7FFE0A45E1C8",
   "parent_session_id": null,
-  "state": "stopped",
+  "state": "initialized",
   "state_version": 1,
-  "started_at": "2026-03-27T07:56:48Z",
-  "updated_at": "2026-03-27T08:16:18Z",
-  "resume_token": "C65AC3C1-F01E-48BC-8C76-3DA987B1DC53",
-  "event_seq": 15,
-  "last_event_id": "event-000015",
+  "started_at": "2026-03-28T03:56:42Z",
+  "updated_at": "2026-03-28T03:56:42Z",
+  "resume_token": "5528B6AA-9A65-4367-B7A3-11A62899D94B",
+  "event_seq": 1,
+  "last_event_id": "event-000001",
   "fork_count": 0,
   "orchestration": {
     "max_state_retries": 3,
@@ -15,11 +15,11 @@
   },
   "cwd": "/Users/takagiyuuki/life-architecture",
   "project_name": "life-architecture",
-  "prompt_seq": 1,
+  "prompt_seq": 0,
   "git": {
     "branch": "main",
-    "uncommitted_changes": 23,
-    "last_commit": "005bfc2"
+    "uncommitted_changes": 42,
+    "last_commit": "fade608"
   },
   "plans": {
     "exists": true,
@@ -29,19 +29,5 @@
     "pending_tasks": 0,
     "completed_tasks": 36
   },
-  "changes_this_session": [
-    {
-      "file": "src/modules/diagnosis/DiagnosisFlow.tsx",
-      "action": "Edit",
-      "timestamp": "2026-03-27T07:59:59Z",
-      "important": false
-    }
-  ],
-  "resumed_at": "2026-03-27T07:57:41Z",
-  "last_message_length": 340,
-  "last_message_hash": "3eb8d5c3c6c960fa",
-  "ended_at": "2026-03-27T08:00:23Z",
-  "duration_minutes": 543,
-  "memory_logged": true,
-  "intent": "semantic"
+  "changes_this_session": []
 }

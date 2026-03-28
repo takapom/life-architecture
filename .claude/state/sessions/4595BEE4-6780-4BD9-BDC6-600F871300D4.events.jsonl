@@ -1,0 +1,4 @@
+{"type":"session.start","ts":"2026-03-28T00:40:10Z","state":"initialized","data":{"cc_session_id":"e1915a85-84d6-4d10-968b-0bff81ee8eb5"}}
+{"id":"event-000001","type":"session.start","ts":"2026-03-28T00:40:10Z","state":"initialized"}
+{"id":"event-000002","type":"tool.edit","ts":"2026-03-28T00:41:24Z","state":"initialized","data":{"file_path":"/Users/takagiyuuki/life-architecture/src/modules/visualization/ArchitectureDiagram.tsx"}}
+{"id":"event-000003","type":"session.stop","ts":"2026-03-28T00:41:34Z","state":"stopped"}

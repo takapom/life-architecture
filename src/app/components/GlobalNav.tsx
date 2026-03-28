@@ -1,13 +1,9 @@
 import { cache } from "react";
-import { createClient } from "@/lib/supabase/server";
+import { getOptionalUser } from "@/lib/supabase/server";
 import Link from "next/link";
 
 const getUser = cache(async () => {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user;
+  return getOptionalUser();
 });
 
 export default async function GlobalNav() {

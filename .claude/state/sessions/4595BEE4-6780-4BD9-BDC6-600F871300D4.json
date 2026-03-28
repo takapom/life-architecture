@@ -1,0 +1,46 @@
+{
+  "session_id": "4595BEE4-6780-4BD9-BDC6-600F871300D4",
+  "parent_session_id": null,
+  "state": "stopped",
+  "state_version": 1,
+  "started_at": "2026-03-28T00:40:10Z",
+  "updated_at": "2026-03-28T00:41:34Z",
+  "resume_token": "1B20024A-DCDD-41A0-A4AD-1619CAA517D9",
+  "event_seq": 3,
+  "last_event_id": "event-000003",
+  "fork_count": 0,
+  "orchestration": {
+    "max_state_retries": 3,
+    "retry_backoff_seconds": 10
+  },
+  "cwd": "/Users/takagiyuuki/life-architecture",
+  "project_name": "life-architecture",
+  "prompt_seq": 1,
+  "git": {
+    "branch": "main",
+    "uncommitted_changes": 17,
+    "last_commit": "fade608"
+  },
+  "plans": {
+    "exists": true,
+    "last_modified": 1774587499,
+    "wip_tasks": 0,
+    "todo_tasks": 0,
+    "pending_tasks": 0,
+    "completed_tasks": 36
+  },
+  "changes_this_session": [
+    {
+      "file": "src/modules/visualization/ArchitectureDiagram.tsx",
+      "action": "Edit",
+      "timestamp": "2026-03-28T00:41:24Z",
+      "important": false
+    }
+  ],
+  "intent": "literal",
+  "last_message_length": 383,
+  "last_message_hash": "fe7f08b36ddbbf58",
+  "ended_at": "2026-03-28T00:41:34Z",
+  "duration_minutes": 541,
+  "memory_logged": true
+}

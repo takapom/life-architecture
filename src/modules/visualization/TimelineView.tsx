@@ -86,7 +86,7 @@ export default function TimelineView({ current, past }: Props) {
                 backgroundColor: "var(--color-surface)",
                 border: "1px solid var(--color-border)",
                 borderRadius: "8px",
-                height: "320px",
+                height: "480px",
                 marginBottom: "24px",
                 overflow: "hidden",
               }}
@@ -135,7 +135,7 @@ export default function TimelineView({ current, past }: Props) {
                 backgroundColor: "var(--color-surface)",
                 border: "1px solid var(--color-accent)",
                 borderRadius: "8px",
-                height: "320px",
+                height: "480px",
                 marginBottom: "24px",
                 overflow: "hidden",
               }}

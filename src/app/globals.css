@@ -8,8 +8,8 @@
   --color-border: #1E293B;
   --color-text: #F8FAFC;
   --color-text-muted: #94A3B8;
-  --color-accent: #22C55E;
-  --color-accent-muted: #16A34A;
+  --color-accent: #3EA8FF;
+  --color-accent-muted: #1a8fe8;
 
   /* --font-heading / --font-body are injected by next/font in layout.tsx */
 }

@@ -20,10 +20,10 @@ export class GeminiProvider implements AIProvider {
 
 以下の8つの回答を元に、このユーザーの人生アーキテクチャを診断してください。
 
-${answersText}`;
+    ${answersText}`;
 
     const { object } = await generateObject({
-      model: google("gemini-2.0-flash"),
+      model: google(process.env.GEMINI_MODEL ?? "gemini-2.5-flash"),
       schema: DiagnosisOutputSchema,
       system: DIAGNOSIS_SYSTEM_PROMPT,
       prompt: userPrompt,

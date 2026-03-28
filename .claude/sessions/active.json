@@ -1,50 +1,8 @@
 {
   "08B5D5D7-7368-4AD7-AAB1-93A55D9FE794": {
     "short_id": "08B5D5D7-736",
-    "last_seen": 1774581998,
-    "pid": "94329",
-    "status": "active"
-  },
-  "FD4F0C8B-4120-4F52-BB4E-E637F36E50DD": {
-    "short_id": "FD4F0C8B-412",
-    "last_seen": 1774573421,
-    "pid": "3757",
-    "status": "active"
-  },
-  "675D591C-149D-445D-90BD-9EB213D70702": {
-    "short_id": "675D591C-149",
-    "last_seen": 1774582138,
-    "pid": "97808",
-    "status": "active"
-  },
-  "484B894A-28E2-4ADE-8297-D045F64A881F": {
-    "short_id": "484B894A-28E",
-    "last_seen": 1774575303,
-    "pid": "21480",
-    "status": "active"
-  },
-  "803FBD35-7454-4DC9-BD6E-E23C554A7913": {
-    "short_id": "803FBD35-745",
-    "last_seen": 1774577058,
-    "pid": "44623",
-    "status": "active"
-  },
-  "1D9F5104-3938-407B-B670-B722CD685579": {
-    "short_id": "1D9F5104-393",
-    "last_seen": 1774581989,
-    "pid": "93975",
-    "status": "active"
-  },
-  "77F1A6C0-F8C5-4426-B22C-FA1428B19B08": {
-    "short_id": "77F1A6C0-F8C",
-    "last_seen": 1774582094,
-    "pid": "96613",
-    "status": "active"
-  },
-  "F5CEC289-4A27-499A-9C26-C84F6BA60879": {
-    "short_id": "F5CEC289-4A2",
-    "last_seen": 1774582135,
-    "pid": "97580",
+    "last_seen": 1774657780,
+    "pid": "19079",
     "status": "active"
   },
   "session-1774598208": {
@@ -55,8 +13,50 @@
   },
   "5ED8CDC2-72CD-4547-8744-61B3FF50B838": {
     "short_id": "5ED8CDC2-72C",
-    "last_seen": 1774598261,
-    "pid": "94926",
+    "last_seen": 1774657772,
+    "pid": "18776",
+    "status": "active"
+  },
+  "session-1774657769": {
+    "short_id": "session-1774",
+    "last_seen": 1774657769,
+    "pid": "18503",
+    "status": "active"
+  },
+  "CDA0ECEC-8336-4B84-A0AD-BD234AA8CD25": {
+    "short_id": "CDA0ECEC-833",
+    "last_seen": 1774657948,
+    "pid": "21439",
+    "status": "active"
+  },
+  "session-1774658410": {
+    "short_id": "session-1774",
+    "last_seen": 1774658410,
+    "pid": "28752",
+    "status": "active"
+  },
+  "session-1774665448": {
+    "short_id": "session-1774",
+    "last_seen": 1774665448,
+    "pid": "42939",
+    "status": "active"
+  },
+  "2B6F7F57-A2F1-415D-AB88-77F4EB99C5B0": {
+    "short_id": "2B6F7F57-A2F",
+    "last_seen": 1774665518,
+    "pid": "44673",
+    "status": "active"
+  },
+  "session-1774668713": {
+    "short_id": "session-1774",
+    "last_seen": 1774668713,
+    "pid": "25694",
+    "status": "active"
+  },
+  "session-1774670202": {
+    "short_id": "session-1774",
+    "last_seen": 1774670202,
+    "pid": "47282",
     "status": "active"
   }
 }

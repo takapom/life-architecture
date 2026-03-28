@@ -34,9 +34,11 @@ export default function DiagnosisFlow({
 
   // Load previously saved answer for current question
   useEffect(() => {
+    const question = QUESTIONS[currentIndex];
+    if (!question) return;
     const stored = getStoredAnswers();
-    setInputValue(stored[String(currentQuestion.id)] ?? "");
-  }, [currentIndex, currentQuestion.id, getStoredAnswers]);
+    setInputValue(stored[String(question.id)] ?? "");
+  }, [currentIndex, getStoredAnswers]);
 
   const handleNext = useCallback(async () => {
     if (!inputValue.trim()) return;

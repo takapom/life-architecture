@@ -12,8 +12,44 @@ interface Props {
   isLoggedIn: boolean;
 }
 
+function joinLabels(labels: string[]) {
+  if (labels.length === 0) return "";
+  if (labels.length === 1) return labels[0];
+  if (labels.length === 2) return `${labels[0]} と ${labels[1]}`;
+  return `${labels.slice(0, -1).join("、")} と ${labels[labels.length - 1]}`;
+}
+
+function buildOverviewFallback(result: DiagnosisResult) {
+  const nodes = result.diagram_data.nodes;
+  const targetIds = new Set(result.diagram_data.edges.map((edge) => edge.target));
+  const entryNodes = nodes.filter((node) => !targetIds.has(node.id));
+  const coreNodes = nodes.filter((node) => node.type === "component");
+  const serviceNodes = nodes.filter((node) => node.type === "service");
+  const storeNodes = nodes.filter((node) => node.type === "database");
+  const entryLabel = joinLabels(entryNodes.map((node) => node.data.label)) || "入口";
+  const coreLabel = joinLabels(coreNodes.map((node) => node.data.label)) || result.architecture_name;
+  const serviceLabel = joinLabels(serviceNodes.map((node) => node.data.label));
+  const storeLabel = joinLabels(storeNodes.map((node) => node.data.label));
+
+  return {
+    headline: `${result.architecture_name}。${entryLabel} から ${coreLabel} に入力が集まり、全体を回している構成。`,
+    composition: serviceLabel || storeLabel
+      ? `${coreLabel} を中核に、${joinLabels([serviceLabel, storeLabel].filter(Boolean))} が結びついて支えている。`
+      : `${coreLabel} が単一の中心として全体を担っている。`,
+  };
+}
+
 export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: Props) {
   const [step, setStep] = useState(0);
+  const [selectedFlowId, setSelectedFlowId] = useState<string | null>(
+    result.diagram_data.flows?.[0]?.id ?? null
+  );
+  const flows = result.diagram_data.flows ?? [];
+  const selectedFlow = flows.find((flow) => flow.id === selectedFlowId) ?? flows[0] ?? null;
+  const nodeLabelById = Object.fromEntries(
+    result.diagram_data.nodes.map((node) => [node.id, node.data.label])
+  );
+  const overview = result.diagram_data.overview ?? buildOverviewFallback(result);
 
   useEffect(() => {
     const timers = [
@@ -25,6 +61,10 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
+
+  useEffect(() => {
+    setSelectedFlowId(result.diagram_data.flows?.[0]?.id ?? null);
+  }, [result.id, result.diagram_data.flows]);
 
   return (
     <main
@@ -99,6 +139,64 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
           >
             {result.architecture_name}
           </h1>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              gap: "14px",
+              marginTop: "20px",
+            }}
+          >
+            {[
+              {
+                label: "全体アーキテクチャ",
+                value: result.architecture_name,
+                color: "var(--color-accent)",
+              },
+              {
+                label: "ひとことで言うと",
+                value: overview.headline,
+                color: "var(--color-text)",
+              },
+              {
+                label: "どう結びついているか",
+                value: overview.composition,
+                color: "var(--color-text)",
+              },
+            ].map((item) => (
+              <div
+                key={item.label}
+                style={{
+                  backgroundColor: "var(--color-surface)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "8px",
+                  padding: "16px 18px",
+                }}
+              >
+                <p
+                  style={{
+                    fontFamily: "var(--font-heading)",
+                    fontSize: "0.64rem",
+                    color: "var(--color-text-muted)",
+                    letterSpacing: "0.12em",
+                    marginBottom: "10px",
+                  }}
+                >
+                  {item.label}
+                </p>
+                <p
+                  style={{
+                    fontFamily: item.label === "OVERALL ARCHITECTURE" ? "var(--font-heading)" : "var(--font-body)",
+                    fontSize: item.label === "OVERALL ARCHITECTURE" ? "0.96rem" : "0.9rem",
+                    color: item.color,
+                    lineHeight: 1.8,
+                  }}
+                >
+                  {item.value}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Architecture diagram */}
@@ -120,17 +218,155 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
           >
             ARCHITECTURE DIAGRAM
           </h2>
+          {flows.length > 0 && (
+            <p
+              style={{
+                fontFamily: "var(--font-body)",
+                fontSize: "0.85rem",
+                color: "var(--color-text-muted)",
+                lineHeight: 1.7,
+                marginBottom: "16px",
+              }}
+            >
+              `ENTRY POINT` が入口。下のアクセスを選ぶと、図の中でその処理経路を順番付きで追える。
+            </p>
+          )}
           <div
             style={{
               backgroundColor: "var(--color-surface)",
               border: "1px solid var(--color-border)",
               borderRadius: "8px",
-              height: "400px",
+              height: "min(74vh, 720px)",
               overflow: "hidden",
             }}
           >
-            <ArchitectureDiagram diagramData={result.diagram_data} />
+            <ArchitectureDiagram
+              diagramData={result.diagram_data}
+              activeFlowId={selectedFlow?.id ?? null}
+            />
           </div>
+          {flows.length > 0 && selectedFlow && (
+            <div
+              style={{
+                marginTop: "20px",
+                backgroundColor: "var(--color-surface)",
+                border: "1px solid var(--color-border)",
+                borderRadius: "8px",
+                padding: "20px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "10px",
+                  marginBottom: "16px",
+                }}
+              >
+                {flows.map((flow) => {
+                  const isActive = flow.id === selectedFlow.id;
+
+                  return (
+                    <button
+                      key={flow.id}
+                      type="button"
+                      onClick={() => setSelectedFlowId(flow.id)}
+                      style={{
+                        border: `1px solid ${isActive ? "var(--color-accent)" : "var(--color-border)"}`,
+                        backgroundColor: isActive ? "rgba(34, 197, 94, 0.12)" : "transparent",
+                        color: isActive ? "#DCFCE7" : "var(--color-text-muted)",
+                        borderRadius: "999px",
+                        padding: "8px 14px",
+                        fontFamily: "var(--font-heading)",
+                        fontSize: "0.72rem",
+                        letterSpacing: "0.04em",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {flow.access}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <p
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "0.92rem",
+                  color: "var(--color-text)",
+                  lineHeight: 1.8,
+                  marginBottom: "18px",
+                }}
+              >
+                {selectedFlow.summary}
+              </p>
+
+              <div style={{ display: "grid", gap: "12px" }}>
+                {selectedFlow.steps.map((flowStep, flowIndex) => (
+                  <div
+                    key={`${selectedFlow.id}-${flowStep.node_id}-${flowIndex}`}
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "36px minmax(0, 1fr)",
+                      gap: "12px",
+                      alignItems: "start",
+                      paddingTop: flowIndex === 0 ? "0" : "12px",
+                      borderTop: flowIndex === 0 ? "none" : "1px solid var(--color-border)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "999px",
+                        border: "1px solid var(--color-accent)",
+                        color: "var(--color-accent)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontFamily: "var(--font-heading)",
+                        fontSize: "0.76rem",
+                      }}
+                    >
+                      {flowIndex + 1}
+                    </div>
+                    <div>
+                      <p
+                        style={{
+                          fontFamily: "var(--font-heading)",
+                          fontSize: "0.78rem",
+                          color: "var(--color-accent)",
+                          marginBottom: "4px",
+                        }}
+                      >
+                        {nodeLabelById[flowStep.node_id] ?? flowStep.node_id}
+                      </p>
+                      <p
+                        style={{
+                          fontFamily: "var(--font-body)",
+                          fontSize: "0.92rem",
+                          color: "var(--color-text)",
+                          marginBottom: "4px",
+                        }}
+                      >
+                        {flowStep.title}
+                      </p>
+                      <p
+                        style={{
+                          fontFamily: "var(--font-body)",
+                          fontSize: "0.84rem",
+                          color: "var(--color-text-muted)",
+                          lineHeight: 1.7,
+                        }}
+                      >
+                        {flowStep.detail}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Radar chart */}

@@ -2,6 +2,15 @@ import { createServerClient, type SetAllCookies } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
+  const isAuthRoute = request.nextUrl.pathname.startsWith("/diagnosis") ||
+    request.nextUrl.pathname.startsWith("/past") ||
+    request.nextUrl.pathname.startsWith("/timeline") ||
+    request.nextUrl.pathname.startsWith("/history");
+
+  if (!isAuthRoute) {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -27,14 +36,13 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const isAuthRoute = request.nextUrl.pathname.startsWith("/diagnosis") ||
-    request.nextUrl.pathname.startsWith("/past") ||
-    request.nextUrl.pathname.startsWith("/timeline") ||
-    request.nextUrl.pathname.startsWith("/history");
+  let user = null;
+  try {
+    const authResult = await supabase.auth.getUser();
+    user = authResult.data.user;
+  } catch (error) {
+    console.error("Supabase auth check failed in middleware", error);
+  }
 
   if (!user && isAuthRoute) {
     const url = request.nextUrl.clone();

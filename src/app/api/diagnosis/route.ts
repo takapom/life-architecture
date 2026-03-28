@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient, createClient } from "@/lib/supabase/server";
 import { enrichAnswers } from "@/modules/diagnosis/questions";
 import { GeminiProvider } from "@/modules/ai/providers/gemini";
 import type { DiagnosisAIInput } from "@/types";
@@ -41,6 +41,7 @@ const RequestSchema = z.object({
 
 export async function POST(request: Request) {
   const supabase = await createClient();
+  const adminSupabase = createAdminClient();
 
   const {
     data: { user },
@@ -132,7 +133,7 @@ export async function POST(request: Request) {
       throw err;
     }
 
-    const { data: result, error: resultError } = await supabase
+    const { data: result, error: resultError } = await adminSupabase
       .from("diagnosis_results")
       .insert({
         diagnosis_id:      existingDiagnosis.id,
@@ -145,6 +146,7 @@ export async function POST(request: Request) {
       .single();
 
     if (resultError || !result) {
+      console.error("Failed to save diagnosis result", resultError);
       return NextResponse.json({ error: "Failed to save result" }, { status: 500 });
     }
 
@@ -181,7 +183,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Failed to save diagnosis" }, { status: 500 });
   }
 
-  const { data: result, error: resultError } = await supabase
+  const { data: result, error: resultError } = await adminSupabase
     .from("diagnosis_results")
     .insert({
       diagnosis_id:      diagnosis.id,
@@ -194,6 +196,7 @@ export async function POST(request: Request) {
     .single();
 
   if (resultError || !result) {
+    console.error("Failed to save diagnosis result", resultError);
     return NextResponse.json({ error: "Failed to save result" }, { status: 500 });
   }
 

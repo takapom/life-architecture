@@ -15,7 +15,7 @@ src/
     diagnosis/     # ヒアリング・診断フロー
     result/        # 診断結果・命名生成
     history/       # 診断履歴の保存・取得
-    visualization/ # React Flow・Recharts
+    visualization/ # 静的フローボード・Recharts
     ai/            # AIエンジン抽象層
       providers/
         gemini.ts  # Gemini 1.5 Flash実装
@@ -132,9 +132,21 @@ const DiagnosisOutputSchema = z.object({
       target: z.string(),
       label:  z.string().optional(),
     })),
+    flows: z.array(z.object({
+      id:      z.string(),
+      access:  z.string(),
+      summary: z.string(),
+      steps: z.array(z.object({
+        node_id: z.string(),
+        title:   z.string(),
+        detail:  z.string(),
+      })),
+    })),
   }),
 })
 ```
+
+`diagram_data` は依存関係だけでなく、代表アクセスごとの処理順を表す `flows` を含む。結果画面ではこの `flows` を使って「どの入口アクセスが、どの順番で、どのノードを通るか」を読めるようにする。
 
 ---
 

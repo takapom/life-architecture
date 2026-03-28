@@ -1,0 +1,46 @@
+{
+  "session_id": "4C1AB212-12D5-492C-BD54-B6DA96A9CCEF",
+  "parent_session_id": null,
+  "state": "stopped",
+  "state_version": 1,
+  "started_at": "2026-03-28T03:31:53Z",
+  "updated_at": "2026-03-28T03:38:44Z",
+  "resume_token": "CCBD97B4-5B96-4FEC-A189-AE29D0452D3B",
+  "event_seq": 8,
+  "last_event_id": "event-000008",
+  "fork_count": 0,
+  "orchestration": {
+    "max_state_retries": 3,
+    "retry_backoff_seconds": 10
+  },
+  "cwd": "/Users/takagiyuuki/life-architecture",
+  "project_name": "life-architecture",
+  "prompt_seq": 1,
+  "git": {
+    "branch": "main",
+    "uncommitted_changes": 34,
+    "last_commit": "fade608"
+  },
+  "plans": {
+    "exists": true,
+    "last_modified": 1774587499,
+    "wip_tasks": 0,
+    "todo_tasks": 0,
+    "pending_tasks": 0,
+    "completed_tasks": 36
+  },
+  "changes_this_session": [
+    {
+      "file": "src/modules/auth/LandingPage.tsx",
+      "action": "Write",
+      "timestamp": "2026-03-28T03:37:45Z",
+      "important": false
+    }
+  ],
+  "intent": "literal",
+  "last_message_length": 677,
+  "last_message_hash": "ae9f1cdf0ae9749a",
+  "ended_at": "2026-03-28T03:38:44Z",
+  "duration_minutes": 546,
+  "memory_logged": true
+}
