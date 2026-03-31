@@ -33,6 +33,7 @@ fail_on_unmapped_scope = true
 
 ["orchestrate".profiles."remote-pr-default".worktree_gate.scope_gate_cmds]
 repo = "npm run lint"
+ops = "bun run typecheck"
 
 # fast-iteration: skip quality gates for rapid prototyping.
 ["orchestrate".profiles."fast-iteration"]
@@ -77,3 +78,4 @@ fail_on_unmapped_scope = true
 ["orchestrate".profiles."claude-execute".worktree_gate.scope_gate_cmds]
 # Match the default repo gate for command-exec mode.
 repo = "npm run lint"
+ops = "bun run typecheck"
