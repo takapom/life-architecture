@@ -48,14 +48,13 @@ test("resolveStateBackend accepts explicit local backend", () => {
 });
 
 test("resolveRuntimeStateDir uses explicit path when state-dir is provided", () => {
+  const expectedStateDir = path.resolve(repoRoot, "..", "wt", ".omta", "state", "sessions", "sess-20260217000000-abcd1234-debug");
   const resolved = resolveRuntimeStateDir(
     repoRoot,
-    "../wt/.omta/state/sessions/sess-20260217000000-abcd1234-debug",
+    expectedStateDir,
     "sess-20260217000000-abcd1234"
   );
-  expect(resolved).toBe(
-    path.resolve("../wt/.omta/state/sessions/sess-20260217000000-abcd1234-debug")
-  );
+  expect(resolved).toBe(expectedStateDir);
 });
 
 test("resolveSessionId accepts explicit value", () => {

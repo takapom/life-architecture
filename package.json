@@ -12,7 +12,8 @@
     "orchestrator:attach": "bun tools/apps/orchestrator.ts attach",
     "orchestrator:resume": "bun tools/apps/orchestrator.ts resume",
     "orchestrator:close": "bun tools/apps/orchestrator.ts close",
-    "orchestrator:certify": "bun tools/apps/orchestrator-certify.ts verify"
+    "orchestrator:certify": "bun tools/apps/orchestrator-certify.ts verify",
+    "dev:tools:rust:build": "bun scripts/build-orchestrator.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.22",

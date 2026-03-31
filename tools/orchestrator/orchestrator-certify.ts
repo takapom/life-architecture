@@ -110,7 +110,7 @@ const GOLDEN_PATH_EXECUTION_PLAN_FIXTURE_PATH = path.resolve(
 function usage(): string {
   return [
     "Usage:",
-    "  bun run orchestrator:certify -- verify [--output <path>]",
+    "  bun run orchestrator:certify [-- --output <path>]",
     "",
     "Notes:",
     "  - emits a certification bundle for the Human + AI PM Orchestrator v1 close gate.",

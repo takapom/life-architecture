@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
-import { spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { execFileSync, spawnSync } from "node:child_process";
+import { mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { writeGithubRunContextFile } from "../../../../tools/orchestrator/shared/github_run_context";
@@ -23,11 +23,32 @@ import {
 
 const repoRoot = path.resolve(import.meta.dir, "../../../../");
 const scriptPath = path.resolve(import.meta.dir, "close_runtime.ts");
-const sessionRoot = path.resolve(repoRoot, "..", "wt", ".omta", "state", "sessions");
+// makeCliStateDir creates a hermetic temp state dir under a temporary wt structure.
+// close_runtime.ts enforces --state-dir must be under ../wt from repoRoot, so the
+// integration tests that spawn the script use a temp fake repo root + wt structure
+// with a real git repo so that `git rev-parse` succeeds.
+// realpathSync is used to canonicalize paths so macOS /var → /private/var symlinks
+// do not cause path-containment checks to fail.
+function makeCliStateDir(prefix: string): { stateDir: string; fakeRepoRoot: string; cleanup: () => void } {
+  const fakeRepoRoot = realpathSync(mkdtempSync(path.join(os.tmpdir(), "close-test-root-")));
+  // init a minimal git repo so close_runtime.ts git commands succeed
+  execFileSync("git", ["init", "-q", "--initial-branch=main", fakeRepoRoot]);
+  execFileSync("git", ["-C", fakeRepoRoot, "commit", "--allow-empty", "-m", "init", "--no-gpg-sign"]);
 
-function makeCliStateDir(prefix: string): string {
-  mkdirSync(sessionRoot, { recursive: true });
-  return mkdtempSync(path.join(sessionRoot, prefix));
+  // Create wt dir and resolve canonical path
+  mkdirSync(path.join(fakeRepoRoot, "..", "wt"), { recursive: true });
+  const wtResolved = realpathSync(path.join(fakeRepoRoot, "..", "wt"));
+  const sessions = path.join(wtResolved, ".omta", "state", "sessions");
+  mkdirSync(sessions, { recursive: true });
+  const stateDir = mkdtempSync(path.join(sessions, prefix));
+  return {
+    stateDir,
+    fakeRepoRoot,
+    cleanup: () => {
+      try { rmSync(fakeRepoRoot, { recursive: true, force: true }); } catch {}
+      try { rmSync(wtResolved, { recursive: true, force: true }); } catch {}
+    },
+  };
 }
 
 test("validateCloseState rejects non-terminal statuses", () => {
@@ -723,7 +744,7 @@ test("resolveGithubRunContextForClose fails closed on repository mismatch", () =
 });
 
 test("close_runtime verify emits closeout summary and session manifest", () => {
-  const stateDir = makeCliStateDir("close-runtime-verify-");
+  const { stateDir, fakeRepoRoot, cleanup: cleanupTestDir } = makeCliStateDir("close-runtime-verify-");
 
   try {
     writeFileSync(
@@ -783,7 +804,7 @@ test("close_runtime verify emits closeout summary and session manifest", () => {
         "owner/repo",
       ],
       {
-        cwd: repoRoot,
+        cwd: fakeRepoRoot,
         encoding: "utf8",
         stdio: ["ignore", "pipe", "pipe"],
       }
@@ -813,14 +834,14 @@ test("close_runtime verify emits closeout summary and session manifest", () => {
     expect(manifest.files.closeout_summary_json).toBe("closeout-summary.json");
     expect(manifest.present_files).toContain("closeout-summary.json");
   } finally {
-    rmSync(stateDir, { recursive: true, force: true });
+    cleanupTestDir();
   }
 });
 
 test("close_runtime run emits followup drafts and manifest uses canonical artifact names", {
   timeout: 45000,
 }, () => {
-  const stateDir = makeCliStateDir("close-runtime-run-");
+  const { stateDir, fakeRepoRoot, cleanup: cleanupTestDir } = makeCliStateDir("close-runtime-run-");
 
   try {
     writeFileSync(
@@ -918,7 +939,7 @@ test("close_runtime run emits followup drafts and manifest uses canonical artifa
         "owner/repo",
       ],
       {
-        cwd: repoRoot,
+        cwd: fakeRepoRoot,
         encoding: "utf8",
         stdio: ["ignore", "pipe", "pipe"],
       }
