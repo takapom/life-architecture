@@ -196,8 +196,6 @@ export default function ArchitectureDiagram({ diagramData, activeFlowId }: Props
   return (
     <div
       style={{
-        height: "100%",
-        overflowY: "hidden",
         padding: "20px",
         display: "grid",
         gap: "18px",

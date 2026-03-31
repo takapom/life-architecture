@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import type { DiagnosisResult, Diagnosis } from "@/types";
 import dynamic from "next/dynamic";
 
@@ -99,7 +100,7 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
             <p style={{ color: "var(--color-text-muted)", fontFamily: "var(--font-body)", fontSize: "0.875rem" }}>
               GitHubログインで自分の診断を保存できます
             </p>
-            <a
+            <Link
               href="/"
               style={{
                 color: "var(--color-accent)",
@@ -109,7 +110,7 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
               }}
             >
               ログイン →
-            </a>
+            </Link>
           </div>
         )}
 
@@ -143,7 +144,7 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
               marginBottom: "16px",
             }}
           >
-            {result.architecture_name}
+            {result.architecture_name}アーキテクチャ
           </h1>
           <p
             style={{
@@ -198,8 +199,6 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
               backgroundColor: "var(--color-surface)",
               border: "1px solid var(--color-border)",
               borderRadius: "8px",
-              height: "min(88vh, 1000px)",
-              overflow: "hidden",
             }}
           >
             <ArchitectureDiagram
