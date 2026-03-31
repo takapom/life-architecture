@@ -9,11 +9,11 @@
 - 要件定義: `docs/requirements.md`
 - 技術アーキテクチャ: `docs/architecture.md`
 - オーケストレーション手順: `docs/orchestration-workflow.md`
+- デザイン思想： `docs/design.md`
 
 ---
 
 ## 技術スタック・アーキテクチャ方針
-
 `docs/architecture.md` を参照。
 (必要な場合のみ参照)
 

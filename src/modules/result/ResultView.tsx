@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from "react";
 import type { DiagnosisResult, Diagnosis } from "@/types";
-import ArchitectureDiagram from "@/modules/visualization/ArchitectureDiagram";
+import dynamic from "next/dynamic";
+
+const ArchitectureDiagram = dynamic(
+  () => import("@/modules/visualization/ArchitectureDiagram"),
+  { ssr: false }
+);
 import RadarChart from "@/modules/visualization/RadarChart";
 
 interface Props {
@@ -122,8 +127,8 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
               color: "var(--color-text-muted)",
               fontFamily: "var(--font-heading)",
               fontSize: "0.75rem",
-              letterSpacing: "0.1em",
-              marginBottom: "8px",
+              letterSpacing: "0.06em",
+              marginBottom: "12px",
             }}
           >
             {diagnosis.phase_label} / {diagnosis.phase_type === "current" ? "現在" : "過去"}
@@ -135,68 +140,25 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
               color: "var(--color-accent)",
               fontWeight: 700,
               lineHeight: 1.2,
+              marginBottom: "16px",
             }}
           >
             {result.architecture_name}
           </h1>
-          <div
+          <p
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: "14px",
-              marginTop: "20px",
+              fontFamily: "var(--font-body)",
+              fontSize: "1rem",
+              color: "var(--color-text-muted)",
+              lineHeight: 1.8,
+              maxWidth: "640px",
             }}
           >
-            {[
-              {
-                label: "全体アーキテクチャ",
-                value: result.architecture_name,
-                color: "var(--color-accent)",
-              },
-              {
-                label: "ひとことで言うと",
-                value: overview.headline,
-                color: "var(--color-text)",
-              },
-              {
-                label: "どう結びついているか",
-                value: overview.composition,
-                color: "var(--color-text)",
-              },
-            ].map((item) => (
-              <div
-                key={item.label}
-                style={{
-                  backgroundColor: "var(--color-surface)",
-                  border: "1px solid var(--color-border)",
-                  borderRadius: "8px",
-                  padding: "16px 18px",
-                }}
-              >
-                <p
-                  style={{
-                    fontFamily: "var(--font-heading)",
-                    fontSize: "0.64rem",
-                    color: "var(--color-text-muted)",
-                    letterSpacing: "0.12em",
-                    marginBottom: "10px",
-                  }}
-                >
-                  {item.label}
-                </p>
-                <p
-                  style={{
-                    fontFamily: item.label === "OVERALL ARCHITECTURE" ? "var(--font-heading)" : "var(--font-body)",
-                    fontSize: item.label === "OVERALL ARCHITECTURE" ? "0.96rem" : "0.9rem",
-                    color: item.color,
-                    lineHeight: 1.8,
-                  }}
-                >
-                  {item.value}
-                </p>
-              </div>
-            ))}
-          </div>
+            {overview.headline}
+            {overview.composition && (
+              <> {overview.composition}</>
+            )}
+          </p>
         </div>
 
         {/* Architecture diagram */}
