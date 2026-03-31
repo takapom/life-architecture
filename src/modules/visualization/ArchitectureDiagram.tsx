@@ -2,25 +2,27 @@
 
 import type { DiagramData, DiagramNode, NodeType } from "@/types";
 
+// AWS-inspired color palette
 const NODE_COLORS: Record<NodeType, string> = {
-  component: "#22C55E",
-  service:   "#3B82F6",
-  database:  "#F59E0B",
-  external:  "#8B5CF6",
+  external:  "#FF9900", // AWS orange  — Entry/User
+  component: "#3F8624", // AWS green   — Compute/Core
+  service:   "#527FFF", // AWS blue    — Service/API
+  database:  "#A855F7", // Purple      — Data Store
 };
 
 const NODE_LABELS: Record<NodeType, string> = {
-  external:  "ENTRY / EXTERNAL",
-  component: "CORE COMPONENT",
-  service:   "SERVICE",
-  database:  "DATA STORE",
+  external:  "Entry Point",
+  component: "Core Component",
+  service:   "Service Layer",
+  database:  "Data Store",
 };
 
-const CANVAS_WIDTH = 960;
-const CANVAS_HEIGHT = 760;
-const NODE_WIDTH = 196;
-const NODE_HEIGHT = 104;
+const CANVAS_WIDTH  = 960;
+const CANVAS_HEIGHT = 720;
+const NODE_WIDTH    = 204;
+const NODE_HEIGHT   = 96;
 const CANVAS_PADDING = 40;
+const ICON_BAR = 46; // width of left colored icon section
 
 interface Props {
   diagramData: DiagramData;
@@ -80,6 +82,111 @@ function wrapText(text: string, maxChars: number, maxLines: number) {
   }
 
   return lines;
+}
+
+// AWS-style type-specific icon symbols (rendered inside the colored icon bar)
+function NodeIcon({ type, cx, cy }: { type: NodeType; cx: number; cy: number }) {
+  switch (type) {
+    case "external":
+      return (
+        <g>
+          <circle cx={cx} cy={cy - 8} r="7" fill="white" />
+          <path
+            d={`M ${cx - 11} ${cy + 13} Q ${cx - 11} ${cy + 2} ${cx} ${cy + 2} Q ${cx + 11} ${cy + 2} ${cx + 11} ${cy + 13}`}
+            fill="white"
+          />
+        </g>
+      );
+    case "component":
+      return (
+        <g>
+          <rect x={cx - 11} y={cy - 11} width="10" height="10" rx="2" fill="white" />
+          <rect x={cx + 1}  y={cy - 11} width="10" height="10" rx="2" fill="white" />
+          <rect x={cx - 11} y={cy + 1}  width="10" height="10" rx="2" fill="white" />
+          <rect x={cx + 1}  y={cy + 1}  width="10" height="10" rx="2" fill="white" />
+        </g>
+      );
+    case "service":
+      return (
+        <g>
+          <line x1={cx - 11} y1={cy - 8} x2={cx + 11} y2={cy - 8} stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+          <line x1={cx - 11} y1={cy}     x2={cx + 11} y2={cy}     stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+          <line x1={cx - 11} y1={cy + 8} x2={cx + 11} y2={cy + 8} stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+        </g>
+      );
+    case "database":
+      return (
+        <g>
+          <rect   x={cx - 10} y={cy - 7} width="20" height="14" fill="rgba(255,255,255,0.9)" />
+          <ellipse cx={cx} cy={cy + 7}  rx="10" ry="4" fill="white" />
+          <ellipse cx={cx} cy={cy - 7}  rx="10" ry="4" fill="white" />
+          <ellipse cx={cx} cy={cy - 7}  rx="10" ry="4" fill="rgba(255,255,255,0.75)" />
+        </g>
+      );
+  }
+}
+
+// Orthogonal (right-angle) edge routing — AWS diagram style
+function getOrthogonalPath(
+  srcX: number, srcY: number,
+  tgtX: number, tgtY: number,
+): { path: string; labelX: number; labelY: number } {
+  const sw = NODE_WIDTH, sh = NODE_HEIGHT;
+
+  const srcCX = srcX + sw / 2, srcCY = srcY + sh / 2;
+  const tgtCX = tgtX + sw / 2, tgtCY = tgtY + sh / 2;
+  const dx = tgtCX - srcCX;
+  const dy = tgtCY - srcCY;
+
+  // Horizontal overlap of the two boxes
+  const hOverlap = Math.max(0, Math.min(srcX + sw, tgtX + sw) - Math.max(srcX, tgtX));
+  const useVerticalExit = hOverlap > 30 || Math.abs(dx) < 40;
+
+  let startX: number, startY: number, endX: number, endY: number;
+
+  if (useVerticalExit) {
+    if (dy >= 0) {
+      startX = srcCX; startY = srcY + sh;
+      endX   = tgtCX; endY   = tgtY;
+    } else {
+      startX = srcCX; startY = srcY;
+      endX   = tgtCX; endY   = tgtY + sh;
+    }
+    if (Math.abs(startX - endX) < 10) {
+      return {
+        path: `M ${startX} ${startY} L ${endX} ${endY}`,
+        labelX: startX + 10,
+        labelY: (startY + endY) / 2,
+      };
+    }
+    const midY = (startY + endY) / 2;
+    return {
+      path: `M ${startX} ${startY} L ${startX} ${midY} L ${endX} ${midY} L ${endX} ${endY}`,
+      labelX: (startX + endX) / 2,
+      labelY: midY - 12,
+    };
+  } else {
+    if (dx > 0) {
+      startX = srcX + sw; startY = srcCY;
+      endX   = tgtX;      endY   = tgtCY;
+    } else {
+      startX = srcX;      startY = srcCY;
+      endX   = tgtX + sw; endY   = tgtCY;
+    }
+    if (Math.abs(startY - endY) < 10) {
+      return {
+        path: `M ${startX} ${startY} L ${endX} ${endY}`,
+        labelX: (startX + endX) / 2,
+        labelY: startY - 12,
+      };
+    }
+    const midX = (startX + endX) / 2;
+    return {
+      path: `M ${startX} ${startY} L ${midX} ${startY} L ${midX} ${endY} L ${endX} ${endY}`,
+      labelX: midX + 6,
+      labelY: (startY + endY) / 2 - 10,
+    };
+  }
 }
 
 export default function ArchitectureDiagram({ diagramData, activeFlowId }: Props) {
@@ -268,10 +375,9 @@ export default function ArchitectureDiagram({ diagramData, activeFlowId }: Props
             position: "relative",
             width: "100%",
             aspectRatio: `${CANVAS_WIDTH} / ${CANVAS_HEIGHT}`,
-            borderRadius: "10px",
+            borderRadius: "8px",
             overflow: "hidden",
-            background:
-              "radial-gradient(circle at top, rgba(30, 41, 59, 0.35), rgba(2, 6, 23, 0.92) 60%)",
+            background: "#0A1525",
           }}
         >
           <svg
@@ -280,101 +386,74 @@ export default function ArchitectureDiagram({ diagramData, activeFlowId }: Props
             aria-label="architecture diagram"
           >
             <defs>
-              <pattern id="diagram-grid" width="28" height="28" patternUnits="userSpaceOnUse">
-                <path d="M 28 0 L 0 0 0 28" fill="none" stroke="rgba(51, 65, 85, 0.28)" strokeWidth="1" />
+              {/* Subtle dot-grid — AWS style */}
+              <pattern id="diagram-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+                <circle cx="0.5" cy="0.5" r="0.8" fill="rgba(71, 85, 105, 0.35)" />
               </pattern>
-              <marker
-                id="diagram-arrow"
-                viewBox="0 0 10 10"
-                refX="8"
-                refY="5"
-                markerWidth="7"
-                markerHeight="7"
-                orient="auto-start-reverse"
-              >
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748B" />
+              {/* Default arrow */}
+              <marker id="diagram-arrow" viewBox="0 0 10 10" refX="9" refY="5"
+                markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 9 5 L 0 9 L 2 5 z" fill="#64748B" />
               </marker>
-              <marker
-                id="diagram-arrow-active"
-                viewBox="0 0 10 10"
-                refX="8"
-                refY="5"
-                markerWidth="7"
-                markerHeight="7"
-                orient="auto-start-reverse"
-              >
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#22C55E" />
+              {/* Active flow arrow */}
+              <marker id="diagram-arrow-active" viewBox="0 0 10 10" refX="9" refY="5"
+                markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 9 5 L 0 9 L 2 5 z" fill="#FF9900" />
               </marker>
             </defs>
 
+            {/* Background dot grid */}
             <rect x="0" y="0" width={CANVAS_WIDTH} height={CANVAS_HEIGHT} fill="url(#diagram-grid)" />
 
+            {/* ── Edges (orthogonal routing) ── */}
             {diagramData.edges.map((edge) => {
               const source = nodesById.get(edge.source);
               const target = nodesById.get(edge.target);
               if (!source || !target) return null;
 
-              const sourcePos = layoutPositions.get(source.id) ?? { x: source.position.x, y: source.position.y };
-              const targetPos = layoutPositions.get(target.id) ?? { x: target.position.x, y: target.position.y };
-              const sourceX = clamp(sourcePos.x, CANVAS_PADDING, CANVAS_WIDTH - NODE_WIDTH - CANVAS_PADDING);
-              const sourceY = clamp(sourcePos.y, CANVAS_PADDING, CANVAS_HEIGHT - NODE_HEIGHT - CANVAS_PADDING);
-              const targetX = clamp(targetPos.x, CANVAS_PADDING, CANVAS_WIDTH - NODE_WIDTH - CANVAS_PADDING);
-              const targetY = clamp(targetPos.y, CANVAS_PADDING, CANVAS_HEIGHT - NODE_HEIGHT - CANVAS_PADDING);
+              const srcPos = layoutPositions.get(source.id) ?? source.position;
+              const tgtPos = layoutPositions.get(target.id) ?? target.position;
+              const sx = clamp(srcPos.x, CANVAS_PADDING, CANVAS_WIDTH  - NODE_WIDTH  - CANVAS_PADDING);
+              const sy = clamp(srcPos.y, CANVAS_PADDING, CANVAS_HEIGHT - NODE_HEIGHT - CANVAS_PADDING);
+              const tx = clamp(tgtPos.x, CANVAS_PADDING, CANVAS_WIDTH  - NODE_WIDTH  - CANVAS_PADDING);
+              const ty = clamp(tgtPos.y, CANVAS_PADDING, CANVAS_HEIGHT - NODE_HEIGHT - CANVAS_PADDING);
+
               const activeStep = activeEdgeStepByKey.get(`${edge.source}->${edge.target}`);
+              const { path, labelX, labelY } = getOrthogonalPath(sx, sy, tx, ty);
               const edgeLabel = activeStep ? `${activeStep}. ${edge.label}` : edge.label;
-              const labelWidth = Math.max(68, (edgeLabel?.length ?? 0) * 7 + 22);
-              const targetOnRight = targetX > sourceX + NODE_WIDTH / 2;
-              const targetOnLeft = sourceX > targetX + NODE_WIDTH / 2;
-              const isSideRoute = targetOnRight || targetOnLeft;
-              const startX = isSideRoute
-                ? targetOnRight ? sourceX + NODE_WIDTH : sourceX
-                : sourceX + NODE_WIDTH / 2;
-              const startY = isSideRoute ? sourceY + NODE_HEIGHT / 2 : sourceY + NODE_HEIGHT;
-              const endX = isSideRoute
-                ? targetOnRight ? targetX : targetX + NODE_WIDTH
-                : targetX + NODE_WIDTH / 2;
-              const endY = isSideRoute ? targetY + NODE_HEIGHT / 2 : targetY;
-              const controlOffset = isSideRoute
-                ? Math.max(56, Math.abs(endX - startX) * 0.45)
-                : Math.max(42, Math.abs(endY - startY) * 0.55);
-              const path = isSideRoute
-                ? targetOnRight
-                  ? `M ${startX} ${startY} C ${startX + controlOffset} ${startY}, ${endX - controlOffset} ${endY}, ${endX} ${endY}`
-                  : `M ${startX} ${startY} C ${startX - controlOffset} ${startY}, ${endX + controlOffset} ${endY}, ${endX} ${endY}`
-                : `M ${startX} ${startY} C ${startX} ${startY + controlOffset}, ${endX} ${endY - controlOffset}, ${endX} ${endY}`;
-              const labelX = isSideRoute ? (startX + endX) / 2 : startX;
-              const labelY = isSideRoute ? (startY + endY) / 2 - 14 : (startY + endY) / 2;
+              const labelW = Math.max(52, (edgeLabel?.length ?? 0) * 6.4 + 16);
 
               return (
                 <g key={edge.id}>
                   <path
                     d={path}
                     fill="none"
-                    stroke={activeStep ? "#22C55E" : "#475569"}
-                    strokeWidth={activeStep ? 3 : 2}
-                    strokeOpacity={activeStep ? 1 : 0.78}
+                    stroke={activeStep ? "#FF9900" : "#334155"}
+                    strokeWidth={activeStep ? 2 : 1.5}
+                    strokeDasharray={activeStep ? undefined : "6 3"}
                     markerEnd={activeStep ? "url(#diagram-arrow-active)" : "url(#diagram-arrow)"}
                   />
                   {edge.label && (
                     <>
                       <rect
-                        x={labelX - labelWidth / 2}
-                        y={labelY - 12}
-                        width={labelWidth}
-                        height="18"
-                        rx="9"
-                        fill="rgba(15, 23, 42, 0.92)"
-                        stroke={activeStep ? "rgba(34, 197, 94, 0.45)" : "rgba(51, 65, 85, 0.8)"}
+                        x={labelX - labelW / 2}
+                        y={labelY - 10}
+                        width={labelW}
+                        height="16"
+                        rx="3"
+                        fill="#0A1525"
+                        stroke={activeStep ? "rgba(255,153,0,0.5)" : "rgba(51, 65, 85, 0.9)"}
+                        strokeWidth="1"
                       />
                       <text
                         x={labelX}
-                        y={labelY + 1}
+                        y={labelY + 2}
                         textAnchor="middle"
                         style={{
-                          fill: activeStep ? "#DCFCE7" : "#94A3B8",
+                          fill: activeStep ? "#FF9900" : "#64748B",
                           fontFamily: "var(--font-heading)",
-                          fontSize: "10px",
-                          letterSpacing: "0.06em",
+                          fontSize: "9.5px",
+                          letterSpacing: "0.04em",
                         }}
                       >
                         {edgeLabel}
@@ -385,88 +464,113 @@ export default function ArchitectureDiagram({ diagramData, activeFlowId }: Props
               );
             })}
 
+            {/* ── Nodes (AWS-style left icon bar cards) ── */}
             {diagramData.nodes.map((node) => {
-              const layoutPos = layoutPositions.get(node.id) ?? { x: node.position.x, y: node.position.y };
-              const x = clamp(layoutPos.x, CANVAS_PADDING, CANVAS_WIDTH - NODE_WIDTH - CANVAS_PADDING);
+              const layoutPos = layoutPositions.get(node.id) ?? node.position;
+              const x = clamp(layoutPos.x, CANVAS_PADDING, CANVAS_WIDTH  - NODE_WIDTH  - CANVAS_PADDING);
               const y = clamp(layoutPos.y, CANVAS_PADDING, CANVAS_HEIGHT - NODE_HEIGHT - CANVAS_PADDING);
-              const color = NODE_COLORS[node.type];
-              const stepIndex = activeNodeStepById.get(node.id);
-              const labelLines = wrapText(node.data.label, 18, 2);
-              const descLines = wrapText(node.data.description ?? "", 20, 3);
-              const dimmed = activeFlow ? !activeNodeStepById.has(node.id) : false;
+              const color      = NODE_COLORS[node.type];
+              const stepIndex  = activeNodeStepById.get(node.id);
+              const dimmed     = activeFlow ? !activeNodeStepById.has(node.id) : false;
+              // content area starts after icon bar + padding
+              const cx = x + ICON_BAR / 2;
+              const cy = y + NODE_HEIGHT / 2;
+              const textX = x + ICON_BAR + 10;
+              const labelLines = wrapText(node.data.label,       19, 2);
+              const descLines  = wrapText(node.data.description ?? "", 22, 2);
+              const labelStartY = y + 32;
+              const descStartY  = labelStartY + labelLines.length * 15 + 6;
 
               return (
-                <g key={node.id} opacity={dimmed ? 0.42 : 1}>
+                <g key={node.id} opacity={dimmed ? 0.3 : 1}>
+                  {/* Drop shadow */}
                   <rect
-                    x={x}
-                    y={y}
-                    width={NODE_WIDTH}
-                    height={NODE_HEIGHT}
-                    rx="14"
-                    fill="rgba(15, 23, 42, 0.9)"
-                    stroke={color}
-                    strokeWidth={stepIndex ? 2.4 : 1.5}
+                    x={x + 3} y={y + 3}
+                    width={NODE_WIDTH} height={NODE_HEIGHT}
+                    rx="5" fill="rgba(0,0,0,0.45)"
                   />
-                  {stepIndex && (
-                    <text
-                      x={x + NODE_WIDTH / 2}
-                      y={y + 20}
-                      textAnchor="middle"
-                      style={{
-                        fill: "#DCFCE7",
-                        fontFamily: "var(--font-heading)",
-                        fontSize: "10px",
-                        letterSpacing: "0.16em",
-                      }}
-                    >
-                      {`STEP ${stepIndex}`}
-                    </text>
-                  )}
-                  {!stepIndex && node.type === "external" && (
-                    <text
-                      x={x + NODE_WIDTH / 2}
-                      y={y + 20}
-                      textAnchor="middle"
-                      style={{
-                        fill: "#C4B5FD",
-                        fontFamily: "var(--font-heading)",
-                        fontSize: "10px",
-                        letterSpacing: "0.14em",
-                      }}
-                    >
-                      ENTRY POINT
-                    </text>
-                  )}
+                  {/* Card background */}
+                  <rect
+                    x={x} y={y}
+                    width={NODE_WIDTH} height={NODE_HEIGHT}
+                    rx="5"
+                    fill="#0D1B2E"
+                    stroke={stepIndex ? color : "rgba(255,255,255,0.08)"}
+                    strokeWidth={stepIndex ? 1.5 : 1}
+                  />
+                  {/* Left icon bar — colored section */}
+                  <rect x={x} y={y} width={ICON_BAR} height={NODE_HEIGHT} rx="5" fill={color} />
+                  {/* Square right edge of icon bar (cancel right-side rounding) */}
+                  <rect x={x + ICON_BAR - 6} y={y} width="6" height={NODE_HEIGHT} fill={color} />
+
+                  {/* Type-specific icon */}
+                  <NodeIcon type={node.type} cx={cx} cy={cy} />
+
+                  {/* Category label */}
                   <text
-                    x={x + NODE_WIDTH / 2}
-                    y={y + (stepIndex ? 44 : 38)}
-                    textAnchor="middle"
+                    x={textX}
+                    y={y + 18}
                     style={{
-                      fill: color,
+                      fill: "rgba(255,255,255,0.38)",
                       fontFamily: "var(--font-heading)",
-                      fontSize: "13px",
-                      letterSpacing: "0.04em",
+                      fontSize: "8px",
+                      letterSpacing: "0.12em",
                     }}
                   >
-                    {labelLines.map((line, index) => (
-                      <tspan key={`${node.id}-label-${index}`} x={x + NODE_WIDTH / 2} dy={index === 0 ? 0 : 16}>
+                    {NODE_LABELS[node.type].toUpperCase()}
+                  </text>
+
+                  {/* Step badge (top-right corner) */}
+                  {stepIndex && (
+                    <>
+                      <circle cx={x + NODE_WIDTH - 14} cy={y + 14} r="11" fill={color} />
+                      <text
+                        x={x + NODE_WIDTH - 14}
+                        y={y + 18.5}
+                        textAnchor="middle"
+                        style={{
+                          fill: "white",
+                          fontFamily: "var(--font-heading)",
+                          fontSize: "10px",
+                          fontWeight: "700",
+                        }}
+                      >
+                        {stepIndex}
+                      </text>
+                    </>
+                  )}
+
+                  {/* Node label */}
+                  <text
+                    x={textX}
+                    y={labelStartY}
+                    style={{
+                      fill: "white",
+                      fontFamily: "var(--font-heading)",
+                      fontSize: "12px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {labelLines.map((line, i) => (
+                      <tspan key={`${node.id}-l${i}`} x={textX} dy={i === 0 ? 0 : 15}>
                         {line}
                       </tspan>
                     ))}
                   </text>
+
+                  {/* Description */}
                   {descLines.length > 0 && (
                     <text
-                      x={x + NODE_WIDTH / 2}
-                      y={y + 74}
-                      textAnchor="middle"
+                      x={textX}
+                      y={descStartY}
                       style={{
-                        fill: "#CBD5E1",
+                        fill: "rgba(255,255,255,0.45)",
                         fontFamily: "var(--font-body)",
-                        fontSize: "11px",
+                        fontSize: "9.5px",
                       }}
                     >
-                      {descLines.map((line, index) => (
-                        <tspan key={`${node.id}-desc-${index}`} x={x + NODE_WIDTH / 2} dy={index === 0 ? 0 : 14}>
+                      {descLines.map((line, i) => (
+                        <tspan key={`${node.id}-d${i}`} x={textX} dy={i === 0 ? 0 : 13}>
                           {line}
                         </tspan>
                       ))}
@@ -475,6 +579,26 @@ export default function ArchitectureDiagram({ diagramData, activeFlowId }: Props
                 </g>
               );
             })}
+
+            {/* ── Legend ── */}
+            <g transform={`translate(16, ${CANVAS_HEIGHT - 28})`}>
+              {(Object.entries(NODE_COLORS) as [NodeType, string][]).map(([type, color], i) => (
+                <g key={type} transform={`translate(${i * 132}, 0)`}>
+                  <rect x="0" y="-9" width="12" height="12" rx="2" fill={color} />
+                  <text
+                    x="16"
+                    y="1"
+                    style={{
+                      fill: "rgba(255,255,255,0.38)",
+                      fontFamily: "var(--font-heading)",
+                      fontSize: "9px",
+                    }}
+                  >
+                    {NODE_LABELS[type]}
+                  </text>
+                </g>
+              ))}
+            </g>
           </svg>
         </div>
       </div>
