@@ -17,17 +17,6 @@ export default function HistoryList({ diagnoses }: Props) {
       }}
     >
       <div style={{ maxWidth: "640px", margin: "0 auto" }}>
-        <p
-          style={{
-            color: "var(--color-text-muted)",
-            fontFamily: "var(--font-heading)",
-            fontSize: "0.75rem",
-            letterSpacing: "0.1em",
-            marginBottom: "12px",
-          }}
-        >
-          HISTORY
-        </p>
         <h1
           style={{
             fontFamily: "var(--font-heading)",
@@ -103,7 +92,7 @@ export default function HistoryList({ diagnoses }: Props) {
                         marginBottom: "4px",
                       }}
                     >
-                      {diagnosis.phase_label.toUpperCase()}
+                      {diagnosis.phase_label}
                     </p>
                     <p
                       style={{

@@ -35,19 +35,16 @@ function IconGitHub() {
 const STEPS = [
   {
     num: "01",
-    code: "auth.signIn({ provider: 'github' })",
     label: "GitHub でログイン",
     desc: "OAuth 認証。メールアドレス不要。",
   },
   {
     num: "02",
-    code: "diagnose.run({ questions: 8 })",
     label: "8 問に回答",
     desc: "生活・仕事・趣味を構造的に自問。約 5 分。",
   },
   {
     num: "03",
-    code: "result.export({ format: 'diagram' })",
     label: "結果を受け取る",
     desc: "アーキテクチャ図・レーダー・レポートを即時生成。",
   },
@@ -56,13 +53,11 @@ const STEPS = [
 const FEATURES = [
   {
     label: "Architecture Diagram",
-    tag: "react-flow",
-    desc: "React Flow で描画されたインタラクティブな構成図。あなたの人生のコンポーネントと依存関係を可視化。",
-    // path data for a grid/table icon
+    desc: "React Flow で描画された構成図。あなたの人生のコンポーネントと依存関係を可視化。",
     icon: (
       <svg
-        width="20"
-        height="20"
+        width="16"
+        height="16"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -78,12 +73,11 @@ const FEATURES = [
   },
   {
     label: "Radar Chart",
-    tag: "recharts",
     desc: "8 次元の人生スペックをレーダーチャートで分析。強みと bottleneck を一目で把握。",
     icon: (
       <svg
-        width="20"
-        height="20"
+        width="16"
+        height="16"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -100,12 +94,11 @@ const FEATURES = [
   },
   {
     label: "Pattern Report",
-    tag: "gemini-2.0-flash",
     desc: "Gemini 2.0 Flash による詳細なパターン分析。リファクタリング提案付きのレポートを生成。",
     icon: (
       <svg
-        width="20"
-        height="20"
+        width="16"
+        height="16"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -181,13 +174,12 @@ export default function LandingPage({ errorCode }: Props) {
           border-radius: 8px;
           border: none;
           cursor: pointer;
-          transition: background-color 200ms, transform 150ms, box-shadow 200ms;
+          transition: background-color 200ms, transform 150ms;
           letter-spacing: 0.01em;
         }
         .cta-btn:hover {
           background-color: var(--color-accent-muted);
           transform: translateY(-1px);
-          box-shadow: 0 4px 20px rgba(62,168,255,0.35);
         }
         .cta-btn:active {
           transform: translateY(0);
@@ -195,18 +187,6 @@ export default function LandingPage({ errorCode }: Props) {
         .cta-btn:focus-visible {
           outline: 2px solid var(--color-accent);
           outline-offset: 3px;
-        }
-        .feature-card {
-          background-color: var(--color-surface);
-          border: 1px solid var(--color-border);
-          border-radius: 12px;
-          padding: 28px;
-          transition: border-color 200ms, transform 200ms, box-shadow 200ms;
-        }
-        .feature-card:hover {
-          border-color: #334155;
-          transform: translateY(-2px);
-          box-shadow: 0 8px 32px rgba(0,0,0,0.4);
         }
         @media (min-width: 768px) {
           .hero-grid {
@@ -238,94 +218,31 @@ export default function LandingPage({ errorCode }: Props) {
                 style={{
                   backgroundColor: "#0D1117",
                   border: "1px solid #1E293B",
-                  borderRadius: "10px",
+                  borderRadius: "8px",
+                  padding: "24px 28px",
                   overflow: "hidden",
                 }}
+                aria-label="診断出力サンプル"
               >
-                {/* macOS-style window chrome */}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    padding: "10px 14px",
-                    borderBottom: "1px solid #1E293B",
-                    backgroundColor: "#161B22",
-                  }}
-                >
+                {TERMINAL_LINES.map((line, i) => (
                   <div
-                    style={{ width: 12, height: 12, borderRadius: "50%", backgroundColor: "#FF5F57" }}
-                    aria-hidden="true"
-                  />
-                  <div
-                    style={{ width: 12, height: 12, borderRadius: "50%", backgroundColor: "#FFBD2E" }}
-                    aria-hidden="true"
-                  />
-                  <div
-                    style={{ width: 12, height: 12, borderRadius: "50%", backgroundColor: "#28C840" }}
-                    aria-hidden="true"
-                  />
-                  <span
+                    key={i}
                     style={{
-                      marginLeft: "auto",
-                      color: "#4B5563",
-                      fontSize: "11px",
+                      color: line.color,
                       fontFamily: "var(--font-heading)",
+                      fontSize: "clamp(10px, 1.6vw, 13px)",
+                      lineHeight: 1.7,
+                      whiteSpace: "pre",
                     }}
                   >
-                    life-arch — zsh
-                  </span>
-                </div>
-                {/* Lines */}
-                <div
-                  style={{ padding: "20px 24px" }}
-                  aria-label="診断出力サンプル"
-                >
-                  {TERMINAL_LINES.map((line, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        color: line.color,
-                        fontFamily: "var(--font-heading)",
-                        fontSize: "clamp(10px, 1.6vw, 13px)",
-                        lineHeight: 1.7,
-                        whiteSpace: "pre",
-                      }}
-                    >
-                      {line.text || "\u00A0"}
-                    </div>
-                  ))}
-                </div>
+                    {line.text || "\u00A0"}
+                  </div>
+                ))}
               </div>
             </div>
 
             {/* ── Hero copy ── */}
             <div>
-              {/* For-engineers badge */}
-              <div style={{ marginBottom: "20px" }}>
-                <span
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    backgroundColor: "rgba(62,168,255,0.08)",
-                    border: "1px solid rgba(62,168,255,0.2)",
-                    borderRadius: "999px",
-                    padding: "4px 12px",
-                    fontFamily: "var(--font-heading)",
-                    fontSize: "11px",
-                    color: "#3EA8FF",
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  <svg width="8" height="8" viewBox="0 0 8 8" fill="#3EA8FF" aria-hidden="true">
-                    <circle cx="4" cy="4" r="4" />
-                  </svg>
-                  For Software Engineers
-                </span>
-              </div>
-
               <h1
                 style={{
                   fontFamily: "var(--font-heading)",
@@ -403,98 +320,65 @@ export default function LandingPage({ errorCode }: Props) {
           }}
         >
           <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-            <p
-              aria-hidden="true"
-              style={{
-                fontFamily: "var(--font-heading)",
-                fontSize: "11px",
-                color: "var(--color-accent)",
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                marginBottom: "12px",
-              }}
-            >
-              // how it works
-            </p>
             <h2
               id="how-heading"
               style={{
-                fontFamily: "var(--font-heading)",
-                fontSize: "clamp(1.25rem, 2.5vw, 1.75rem)",
+                fontFamily: "var(--font-body)",
+                fontSize: "clamp(1.25rem, 2.5vw, 1.5rem)",
                 fontWeight: 600,
                 color: "var(--color-text)",
                 marginBottom: "40px",
               }}
             >
-              3 ステップで診断完了
+              使い方
             </h2>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-                gap: "20px",
-              }}
-            >
-              {STEPS.map((step) => (
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {STEPS.map((step, index) => (
                 <div
                   key={step.num}
                   style={{
-                    backgroundColor: "var(--color-surface)",
-                    border: "1px solid var(--color-border)",
-                    borderRadius: "10px",
-                    padding: "24px",
+                    display: "grid",
+                    gridTemplateColumns: "48px 1fr",
+                    gap: "16px",
+                    alignItems: "baseline",
+                    paddingTop: index === 0 ? "0" : "28px",
+                    paddingBottom: "28px",
+                    borderBottom: index < STEPS.length - 1 ? "1px solid var(--color-border)" : "none",
                   }}
                 >
-                  <div
+                  <span
                     style={{
                       fontFamily: "var(--font-heading)",
-                      fontSize: "11px",
+                      fontSize: "0.8rem",
                       color: "var(--color-accent)",
-                      letterSpacing: "0.1em",
-                      marginBottom: "12px",
+                      letterSpacing: "0.05em",
                     }}
                   >
-                    STEP {step.num}
-                  </div>
-                  <div
-                    aria-hidden="true"
-                    style={{
-                      backgroundColor: "#0D1117",
-                      border: "1px solid #1E293B",
-                      borderRadius: "6px",
-                      padding: "8px 12px",
-                      fontFamily: "var(--font-heading)",
-                      fontSize: "12px",
-                      color: "#38BDF8",
-                      marginBottom: "16px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {step.code}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontWeight: 600,
-                      fontSize: "0.95rem",
-                      color: "var(--color-text)",
-                      marginBottom: "6px",
-                    }}
-                  >
-                    {step.label}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "0.85rem",
-                      color: "var(--color-text-muted)",
-                      lineHeight: 1.6,
-                    }}
-                  >
-                    {step.desc}
+                    {step.num}
+                  </span>
+                  <div>
+                    <p
+                      style={{
+                        fontFamily: "var(--font-body)",
+                        fontWeight: 600,
+                        fontSize: "1rem",
+                        color: "var(--color-text)",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      {step.label}
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: "var(--font-body)",
+                        fontSize: "0.875rem",
+                        color: "var(--color-text-muted)",
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      {step.desc}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -511,24 +395,11 @@ export default function LandingPage({ errorCode }: Props) {
           }}
         >
           <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-            <p
-              aria-hidden="true"
-              style={{
-                fontFamily: "var(--font-heading)",
-                fontSize: "11px",
-                color: "var(--color-accent)",
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                marginBottom: "12px",
-              }}
-            >
-              // output
-            </p>
             <h2
               id="output-heading"
               style={{
-                fontFamily: "var(--font-heading)",
-                fontSize: "clamp(1.25rem, 2.5vw, 1.75rem)",
+                fontFamily: "var(--font-body)",
+                fontSize: "clamp(1.25rem, 2.5vw, 1.5rem)",
                 fontWeight: 600,
                 color: "var(--color-text)",
                 marginBottom: "40px",
@@ -540,65 +411,48 @@ export default function LandingPage({ errorCode }: Props) {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                gap: "20px",
+                gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+                gap: "40px 48px",
               }}
             >
               {FEATURES.map((f) => (
-                <div key={f.label} className="feature-card">
+                <div key={f.label}>
                   <div
-                    aria-hidden="true"
                     style={{
-                      display: "inline-flex",
+                      display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      width: "40px",
-                      height: "40px",
-                      backgroundColor: "rgba(62,168,255,0.08)",
-                      border: "1px solid rgba(62,168,255,0.15)",
-                      borderRadius: "8px",
-                      color: "var(--color-accent)",
-                      marginBottom: "16px",
-                    }}
-                  >
-                    {f.icon}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontWeight: 600,
-                      fontSize: "1rem",
-                      color: "var(--color-text)",
+                      gap: "8px",
                       marginBottom: "8px",
                     }}
                   >
-                    {f.label}
+                    <span
+                      style={{ color: "var(--color-text-muted)", flexShrink: 0 }}
+                      aria-hidden="true"
+                    >
+                      {f.icon}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-body)",
+                        fontWeight: 600,
+                        fontSize: "0.95rem",
+                        color: "var(--color-text)",
+                      }}
+                    >
+                      {f.label}
+                    </span>
                   </div>
-                  <div
+                  <p
                     style={{
                       fontFamily: "var(--font-body)",
                       fontSize: "0.875rem",
                       color: "var(--color-text-muted)",
                       lineHeight: 1.7,
-                      marginBottom: "16px",
+                      paddingLeft: "24px",
                     }}
                   >
                     {f.desc}
-                  </div>
-                  <div
-                    style={{
-                      display: "inline-block",
-                      fontFamily: "var(--font-heading)",
-                      fontSize: "11px",
-                      color: "#38BDF8",
-                      backgroundColor: "rgba(56,189,248,0.08)",
-                      border: "1px solid rgba(56,189,248,0.15)",
-                      borderRadius: "4px",
-                      padding: "2px 8px",
-                    }}
-                  >
-                    {f.tag}
-                  </div>
+                  </p>
                 </div>
               ))}
             </div>
@@ -614,7 +468,7 @@ export default function LandingPage({ errorCode }: Props) {
             textAlign: "center",
           }}
         >
-          <div style={{ maxWidth: "560px", margin: "0 auto" }}>
+          <div style={{ maxWidth: "480px", margin: "0 auto" }}>
             <h2
               id="footer-cta-heading"
               style={{
@@ -643,12 +497,7 @@ export default function LandingPage({ errorCode }: Props) {
               あなたのアーキテクチャには、どんなパターンが隠れているか。
             </p>
 
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
+            <div style={{ display: "flex", justifyContent: "center" }}>
               <CtaButton label="無料で診断を始める" />
             </div>
 

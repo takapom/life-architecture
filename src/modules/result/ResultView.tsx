@@ -171,14 +171,14 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
         >
           <h2
             style={{
-              fontFamily: "var(--font-heading)",
-              fontSize: "0.8rem",
+              fontFamily: "var(--font-body)",
+              fontSize: "0.875rem",
+              fontWeight: 600,
               color: "var(--color-text-muted)",
-              letterSpacing: "0.1em",
               marginBottom: "16px",
             }}
           >
-            ARCHITECTURE DIAGRAM
+            アーキテクチャ図
           </h2>
           {flows.length > 0 && (
             <p
@@ -341,14 +341,14 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
         >
           <h2
             style={{
-              fontFamily: "var(--font-heading)",
-              fontSize: "0.8rem",
+              fontFamily: "var(--font-body)",
+              fontSize: "0.875rem",
+              fontWeight: 600,
               color: "var(--color-text-muted)",
-              letterSpacing: "0.1em",
               marginBottom: "16px",
             }}
           >
-            PERFORMANCE METRICS
+            特性スコア
           </h2>
           <div
             style={{
@@ -374,14 +374,14 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
         >
           <h2
             style={{
-              fontFamily: "var(--font-heading)",
-              fontSize: "0.8rem",
+              fontFamily: "var(--font-body)",
+              fontSize: "0.875rem",
+              fontWeight: 600,
               color: "var(--color-text-muted)",
-              letterSpacing: "0.1em",
               marginBottom: "16px",
             }}
           >
-            DIAGNOSIS REPORT
+            診断レポート
           </h2>
           <div
             style={{
