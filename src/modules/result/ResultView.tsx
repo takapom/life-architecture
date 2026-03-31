@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import type { DiagnosisResult, Diagnosis } from "@/types";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -144,7 +145,7 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
               marginBottom: "16px",
             }}
           >
-            {result.architecture_name}
+            {result.architecture_name}アーキテクチャ
           </h1>
           <p
             style={{
@@ -201,8 +202,6 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
               backgroundColor: "var(--color-surface)",
               border: "1px solid var(--color-border)",
               borderRadius: "8px",
-              height: "min(88vh, 1000px)",
-              overflow: "hidden",
             }}
           >
             <ArchitectureDiagram

@@ -12,7 +12,7 @@ writing_language = "ja"
 
 ["orchestrate".defaults.child_exec]
 cmd = "claude"
-args = "--dangerously-skip-permissions"
+args = "--dangerously-skip-permissions --output-format stream-json --verbose"
 
 ["orchestrate".defaults.runtime_policy]
 max_runtime_seconds = 3600
@@ -33,6 +33,7 @@ fail_on_unmapped_scope = true
 
 ["orchestrate".profiles."remote-pr-default".worktree_gate.scope_gate_cmds]
 repo = "npm run lint"
+ops = "bun run typecheck"
 
 # fast-iteration: skip quality gates for rapid prototyping.
 ["orchestrate".profiles."fast-iteration"]
@@ -77,3 +78,4 @@ fail_on_unmapped_scope = true
 ["orchestrate".profiles."claude-execute".worktree_gate.scope_gate_cmds]
 # Match the default repo gate for command-exec mode.
 repo = "npm run lint"
+ops = "bun run typecheck"
