@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import type { DiagnosisResult, Diagnosis } from "@/types";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 
 const ArchitectureDiagram = dynamic(
   () => import("@/modules/visualization/ArchitectureDiagram"),
@@ -99,7 +100,7 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
             <p style={{ color: "var(--color-text-muted)", fontFamily: "var(--font-body)", fontSize: "0.875rem" }}>
               GitHubログインで自分の診断を保存できます
             </p>
-            <a
+            <Link
               href="/"
               style={{
                 color: "var(--color-accent)",
@@ -109,7 +110,7 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
               }}
             >
               ログイン →
-            </a>
+            </Link>
           </div>
         )}
 
@@ -172,10 +173,12 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
           <h2
             style={{
               fontFamily: "var(--font-body)",
-              fontSize: "0.875rem",
-              fontWeight: 600,
-              color: "var(--color-text-muted)",
+              fontSize: "1.125rem",
+              fontWeight: 700,
+              color: "var(--color-text)",
               marginBottom: "16px",
+              paddingLeft: "12px",
+              borderLeft: "3px solid var(--color-accent)",
             }}
           >
             アーキテクチャ図
@@ -342,10 +345,12 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
           <h2
             style={{
               fontFamily: "var(--font-body)",
-              fontSize: "0.875rem",
-              fontWeight: 600,
-              color: "var(--color-text-muted)",
+              fontSize: "1.125rem",
+              fontWeight: 700,
+              color: "var(--color-text)",
               marginBottom: "16px",
+              paddingLeft: "12px",
+              borderLeft: "3px solid var(--color-accent)",
             }}
           >
             特性スコア
@@ -375,10 +380,12 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
           <h2
             style={{
               fontFamily: "var(--font-body)",
-              fontSize: "0.875rem",
-              fontWeight: 600,
-              color: "var(--color-text-muted)",
+              fontSize: "1.125rem",
+              fontWeight: 700,
+              color: "var(--color-text)",
               marginBottom: "16px",
+              paddingLeft: "12px",
+              borderLeft: "3px solid var(--color-accent)",
             }}
           >
             診断レポート

@@ -117,7 +117,7 @@ const FEATURES = [
 ];
 
 const TERMINAL_LINES: { text: string; color: string }[] = [
-  { text: "$ life-arch diagnose --interactive", color: "#3EA8FF" },
+  { text: "$ life-arch diagnose --interactive", color: "#22C55E" },
   { text: "> Analyzing life patterns...", color: "#94A3B8" },
   { text: "> Processing 8 dimensions...", color: "#94A3B8" },
   { text: "", color: "transparent" },
@@ -134,11 +134,11 @@ const TERMINAL_LINES: { text: string; color: string }[] = [
   { text: "│  cohesion:         88 ▓▓▓▓░  │", color: "#CBD5E1" },
   { text: "└──────────────────────────────┘", color: "#CBD5E1" },
   { text: "", color: "transparent" },
-  { text: "> Pattern: Tightly-Coupled Monolith", color: "#38BDF8" },
-  { text: "> Bottleneck: Passion ⟶ Distraction", color: "#38BDF8" },
-  { text: "> Recommendation: Extract services", color: "#38BDF8" },
+  { text: "> Pattern: Tightly-Coupled Monolith", color: "#86EFAC" },
+  { text: "> Bottleneck: Passion ⟶ Distraction", color: "#86EFAC" },
+  { text: "> Recommendation: Extract services", color: "#86EFAC" },
   { text: "", color: "transparent" },
-  { text: "✓ Diagnosis complete in 0.42s", color: "#3EA8FF" },
+  { text: "✓ Diagnosis complete in 0.42s", color: "#22C55E" },
 ];
 
 // ── CTA button (reused in hero + footer) ──────────────────
@@ -212,35 +212,6 @@ export default function LandingPage({ errorCode }: Props) {
             className="hero-grid"
             style={{ display: "flex", flexDirection: "column", gap: "40px" }}
           >
-            {/* ── Terminal preview ── */}
-            <div>
-              <div
-                style={{
-                  backgroundColor: "#0D1117",
-                  border: "1px solid #1E293B",
-                  borderRadius: "8px",
-                  padding: "24px 28px",
-                  overflow: "hidden",
-                }}
-                aria-label="診断出力サンプル"
-              >
-                {TERMINAL_LINES.map((line, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      color: line.color,
-                      fontFamily: "var(--font-heading)",
-                      fontSize: "clamp(10px, 1.6vw, 13px)",
-                      lineHeight: 1.7,
-                      whiteSpace: "pre",
-                    }}
-                  >
-                    {line.text || "\u00A0"}
-                  </div>
-                ))}
-              </div>
-            </div>
-
             {/* ── Hero copy ── */}
             <div>
               <h1
@@ -307,6 +278,35 @@ export default function LandingPage({ errorCode }: Props) {
                 <span aria-hidden="true">·</span>
                 <span>登録不要</span>
               </p>
+            </div>
+
+            {/* ── Terminal preview ── */}
+            <div>
+              <div
+                style={{
+                  backgroundColor: "#0D1117",
+                  border: "1px solid #1E293B",
+                  borderRadius: "8px",
+                  padding: "24px 28px",
+                  overflow: "hidden",
+                }}
+                aria-label="診断出力サンプル"
+              >
+                {TERMINAL_LINES.map((line, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      color: line.color,
+                      fontFamily: "var(--font-heading)",
+                      fontSize: "clamp(10px, 1.6vw, 13px)",
+                      lineHeight: 1.7,
+                      whiteSpace: "pre",
+                    }}
+                  >
+                    {line.text || "\u00A0"}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
