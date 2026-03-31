@@ -8,6 +8,7 @@
 詳細は `docs/` を参照。
 - 要件定義: `docs/requirements.md`
 - 技術アーキテクチャ: `docs/architecture.md`
+- オーケストレーション手順: `docs/orchestration-workflow.md`
 
 ---
 
