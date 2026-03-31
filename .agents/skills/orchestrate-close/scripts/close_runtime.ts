@@ -1124,7 +1124,7 @@ function applyCleanupPlan(
 ): CleanupResult[] {
   const results: CleanupResult[] = [];
   for (const target of plan.targets) {
-    const args = ["scripts/ops/cleanup-by-pr.sh", "--pr", target.pr];
+    const args = ["tools/apps/pr/cleanup-by-pr.sh", "--pr", target.pr];
     const repository = options.repositoryOverride.trim() || plan.repository.trim();
     if (repository) {
       args.push("--repository", repository);
