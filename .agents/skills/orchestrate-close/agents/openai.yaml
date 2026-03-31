@@ -1,0 +1,6 @@
+interface:
+  display_name: "Orchestrate Close"
+  short_description: "Phase 3: cleanup, residue checks, and re-implementation loop handoff."
+  default_prompt: "Use $orchestrate-close to close execution with safe cleanup, residue checks, and follow-up task handoff."
+policy:
+  allow_implicit_invocation: false

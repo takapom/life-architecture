@@ -1,0 +1,4 @@
+interface:
+  display_name: "Frontend UI/UX Design"
+  short_description: "First-principles SaaS UI/UX + OMTA adapter."
+  default_prompt: "Use $frontend-ui-ux-design to design, implement, or review OMTA web UI from first principles and then map it to repo contracts."

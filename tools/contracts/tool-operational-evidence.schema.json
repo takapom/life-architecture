@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://omta.dev/tools/contracts/tool-operational-evidence.schema.json",
+  "title": "Repo Operations Platform Tool Operational Evidence",
+  "description": "Canonical machine-readable record for /tools operator-path success, failure, and latency evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "tool_id",
+    "command",
+    "args",
+    "outcome",
+    "recorded_at",
+    "repo_root",
+    "cwd",
+    "duration_ms"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "tool_id": {
+      "enum": ["orchestrator", "repoctl"]
+    },
+    "command": {
+      "type": "string",
+      "minLength": 1
+    },
+    "args": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "outcome": {
+      "enum": ["success", "failure"]
+    },
+    "recorded_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repo_root": {
+      "type": "string",
+      "minLength": 1
+    },
+    "cwd": {
+      "type": "string",
+      "minLength": 1
+    },
+    "duration_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "detail": {
+      "type": "string"
+    },
+    "delegated_script": {
+      "type": "string"
+    },
+    "binary_path": {
+      "type": "string"
+    }
+  }
+}

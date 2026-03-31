@@ -1,0 +1,79 @@
+["orchestrate"]
+default_profile = "remote-pr-default"
+
+["orchestrate".defaults]
+spawn_mode = "child-exec"
+cleanup = true
+require_passing_tests = true
+require_acceptance_checks = true
+require_worktree_setup = true
+setup_worktree_cmd = "npm ci"
+writing_language = "ja"
+
+["orchestrate".defaults.child_exec]
+cmd = "claude"
+args = "--dangerously-skip-permissions"
+
+["orchestrate".defaults.runtime_policy]
+max_runtime_seconds = 3600
+stuck_timeout_seconds = 300
+
+# remote-pr-default: node-scope gate with per-scope lint/typecheck commands.
+# Fill in scope_gate_cmds for every scope your project uses.
+["orchestrate".profiles."remote-pr-default"]
+auto_approve = true
+require_passing_tests = true
+require_acceptance_checks = true
+require_worktree_setup = true
+
+["orchestrate".profiles."remote-pr-default".worktree_gate]
+enabled = true
+mode = "node-scope"
+fail_on_unmapped_scope = true
+
+["orchestrate".profiles."remote-pr-default".worktree_gate.scope_gate_cmds]
+repo = "npm run lint"
+
+# fast-iteration: skip quality gates for rapid prototyping.
+["orchestrate".profiles."fast-iteration"]
+auto_approve = true
+require_passing_tests = false
+require_acceptance_checks = false
+require_worktree_setup = false
+
+["orchestrate".profiles."fast-iteration".worktree_gate]
+enabled = false
+
+# full-auto-merge: runs full CI gate before merge.
+["orchestrate".profiles."full-auto-merge"]
+auto_approve = true
+
+["orchestrate".profiles."full-auto-merge".worktree_gate]
+enabled = true
+# Use the strictest available repo-wide validation in this repository.
+gate_cmd = "npm run lint && npm run build"
+
+# manual-safe: requires human approval before merge, with full CI gate.
+["orchestrate".profiles."manual-safe"]
+auto_approve = false
+
+["orchestrate".profiles."manual-safe".worktree_gate]
+enabled = true
+gate_cmd = "npm run lint && npm run build"
+
+# claude-execute: spawns claude as a command (non-child-exec mode).
+["orchestrate".profiles."claude-execute"]
+spawn_mode = "command"
+auto_approve = true
+
+["orchestrate".profiles."claude-execute".command_exec]
+agent_cmd = "claude -p \"$(cat '{task_file}')\" --dangerously-skip-permissions"
+
+["orchestrate".profiles."claude-execute".worktree_gate]
+enabled = true
+mode = "node-scope"
+fail_on_unmapped_scope = true
+
+["orchestrate".profiles."claude-execute".worktree_gate.scope_gate_cmds]
+# Match the default repo gate for command-exec mode.
+repo = "npm run lint"

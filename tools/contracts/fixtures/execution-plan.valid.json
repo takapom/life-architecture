@@ -1,0 +1,84 @@
+{
+  "base_branch": "main",
+  "max_workers": 4,
+  "merge_mode": "remote-pr",
+  "merge_queue": false,
+  "cleanup": true,
+  "queue_strategy": "dag_priority",
+  "require_passing_tests": true,
+  "require_traceability": true,
+  "require_acceptance_checks": true,
+  "issue_tracking": {
+    "strategy": "remote-github-sot",
+    "repository": "Omluc/omta",
+    "node_issue_mode": "per-node",
+    "progress_issue_number": 880000,
+    "progress_issue_url": "https://github.com/Omluc/omta/issues/880000"
+  },
+  "source_items": [
+    {
+      "id": "FC-1",
+      "verdict": "valid",
+      "summary": "OPS-900001: Phase contracts remain composable across runtimes.",
+      "github_issue": "https://github.com/Omluc/omta/issues/100",
+      "parent_issue_number": 900,
+      "parent_issue_url": "https://github.com/Omluc/omta/issues/900"
+    },
+    {
+      "id": "FC-2",
+      "verdict": "pending",
+      "summary": "OPS-900002: Follow-up cleanup can remain deferred.",
+      "github_issue": "https://github.com/Omluc/omta/issues/101",
+      "parent_issue_number": 901,
+      "parent_issue_url": "https://github.com/Omluc/omta/issues/901"
+    }
+  ],
+  "issue_map": {
+    "FC-1": "https://github.com/Omluc/omta/issues/100",
+    "FC-2": "https://github.com/Omluc/omta/issues/101"
+  },
+  "deferred_items": [
+    {
+      "id": "FC-2",
+      "reason": "active_claim_lease owner=other-session lease_expires_at=2099-01-01T00:00:00Z"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "OPS-900001",
+      "issue_node_id": "NODE_OPS-900001",
+      "branch": "task/ops-900001-phase-contracts",
+      "priority": 1,
+      "deps": [],
+      "github_issue": "https://github.com/Omluc/omta/issues/100",
+      "scope": "tools/orchestrator/runtime/**",
+      "allowed_files": ["tools/orchestrator/runtime/**"],
+      "commit_units": ["CU1: phase contract runtime"],
+      "non_goals": ["Do not broaden the phase contract beyond runtime artifacts."],
+      "acceptance_checks": [
+        "bun test tools/orchestrator/runtime/orchestration_phase_contract.test.ts"
+      ],
+      "tests": ["bun test tools/orchestrator/runtime/orchestration_phase_contract.test.ts"],
+      "covers": ["FC-1"],
+      "instructions": "Run only the commands explicitly listed under `Tests`, `Acceptance Command Gate`, and `Required Worktree Gate` in this task prompt.",
+      "task_scope": {
+        "owner_bucket": "tools",
+        "owner_buckets": ["tools"],
+        "conflict_class": "parallel-safe",
+        "admission_mode": "standard",
+        "global_invariant": "",
+        "unfreeze_condition": "",
+        "verification_class": "cheap",
+        "scope_gate_keys": ["task-governance"],
+        "serialized_scope_keys": ["task_governance_control_plane"],
+        "hot_root_paths": [],
+        "resource_claims": [
+          {
+            "mode": "exclusive",
+            "resource": "execution-plan-writer"
+          }
+        ]
+      }
+    }
+  ]
+}

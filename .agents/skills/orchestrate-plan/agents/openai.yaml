@@ -1,0 +1,6 @@
+interface:
+  display_name: "Orchestrate Intake"
+  short_description: "Phase 1: normalize requirements into canonical GitHub task issues."
+  default_prompt: "Use $orchestrate-plan to normalize requirements, fact-check issue content, and upsert canonical GitHub task issues for intake."
+policy:
+  allow_implicit_invocation: false

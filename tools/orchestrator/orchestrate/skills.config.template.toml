@@ -1,0 +1,86 @@
+# skills.config.template.toml
+#
+# Project-neutral template for tools/orchestrator.
+# Copy to skills.config.toml in your project and adjust for your tech stack.
+# All @omta/* references from the canonical omta config have been removed.
+
+["orchestrate"]
+default_profile = "remote-pr-default"
+
+["orchestrate".defaults]
+spawn_mode = "child-exec"
+cleanup = true
+require_passing_tests = true
+require_acceptance_checks = true
+require_worktree_setup = true
+# Set to your project's install command (e.g. "pnpm install --frozen-lockfile", "npm ci")
+setup_worktree_cmd = ""
+writing_language = "en"
+
+["orchestrate".defaults.child_exec]
+cmd = "claude"
+args = "--dangerously-skip-permissions"
+
+["orchestrate".defaults.runtime_policy]
+max_runtime_seconds = 3600
+stuck_timeout_seconds = 300
+
+# remote-pr-default: node-scope gate with per-scope lint/typecheck commands.
+# Fill in scope_gate_cmds for every scope your project uses.
+["orchestrate".profiles."remote-pr-default"]
+auto_approve = true
+
+["orchestrate".profiles."remote-pr-default".worktree_gate]
+enabled = true
+mode = "node-scope"
+fail_on_unmapped_scope = true
+
+["orchestrate".profiles."remote-pr-default".worktree_gate.scope_gate_cmds]
+# Example entries — replace with your project's scopes and commands:
+# frontend = "pnpm run --filter my-app lint"
+# backend  = "pnpm run --filter my-api typecheck"
+# repo     = "pnpm run ci:fast"
+
+# fast-iteration: skip quality gates for rapid prototyping.
+["orchestrate".profiles."fast-iteration"]
+auto_approve = true
+require_passing_tests = false
+require_acceptance_checks = false
+require_worktree_setup = false
+
+["orchestrate".profiles."fast-iteration".worktree_gate]
+enabled = false
+
+# full-auto-merge: runs full CI gate before merge.
+["orchestrate".profiles."full-auto-merge"]
+auto_approve = true
+
+["orchestrate".profiles."full-auto-merge".worktree_gate]
+enabled = true
+# Replace with your project's strict CI command:
+gate_cmd = ""
+
+# manual-safe: requires human approval before merge, with full CI gate.
+["orchestrate".profiles."manual-safe"]
+auto_approve = false
+
+["orchestrate".profiles."manual-safe".worktree_gate]
+enabled = true
+gate_cmd = ""
+
+# claude-execute: spawns claude as a command (non-child-exec mode).
+["orchestrate".profiles."claude-execute"]
+spawn_mode = "command"
+auto_approve = true
+
+["orchestrate".profiles."claude-execute".command_exec]
+agent_cmd = "claude -p \"$(cat '{task_file}')\" --dangerously-skip-permissions"
+
+["orchestrate".profiles."claude-execute".worktree_gate]
+enabled = true
+mode = "node-scope"
+fail_on_unmapped_scope = true
+
+["orchestrate".profiles."claude-execute".worktree_gate.scope_gate_cmds]
+# Example entries — replace with your project's scopes and commands:
+# repo = "pnpm run ci:fast"

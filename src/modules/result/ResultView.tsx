@@ -74,7 +74,7 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
         padding: "48px 24px",
       }}
     >
-      <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
         {/* Unauthenticated banner */}
         {!isLoggedIn && (
           <div
@@ -236,7 +236,7 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
               backgroundColor: "var(--color-surface)",
               border: "1px solid var(--color-border)",
               borderRadius: "8px",
-              height: "min(74vh, 720px)",
+              height: "min(88vh, 1000px)",
               overflow: "hidden",
             }}
           >

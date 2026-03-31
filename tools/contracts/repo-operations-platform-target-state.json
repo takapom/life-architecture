@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "platform_id": "repo-operations-platform",
+  "platform_root": "/tools",
+  "goal_state": {
+    "canonical_topology": [
+      {
+        "path": "tools/contracts",
+        "role": "canonical machine-readable contracts"
+      },
+      {
+        "path": "tools/core",
+        "role": "pure platform logic and state transitions"
+      },
+      {
+        "path": "tools/adapters",
+        "role": "typed side-effect boundaries"
+      },
+      {
+        "path": "tools/apps",
+        "role": "thin operator-facing CLI and app entrypoints"
+      },
+      {
+        "path": "tools/scanners",
+        "role": "repo certification engines and rule families"
+      },
+      {
+        "path": "tools/generated",
+        "role": "generated registries, bindings, and help surfaces"
+      },
+      {
+        "path": "tools/orchestrator",
+        "role": "canonical Rust orchestration runtime program root"
+      },
+      {
+        "path": "tools/repoctl",
+        "role": "canonical Rust repo operations control-plane program root"
+      }
+    ],
+    "engine_policy": {
+      "rust_canonical_for": [
+        "repo-wide scanners",
+        "fail-closed validators",
+        "heavy graph and AST analysis",
+        "stateful orchestration runtime",
+        "local coordination daemons",
+        "session-lease arbitration"
+      ],
+      "typescript_allowed_for": [
+        "thin operator-facing CLI adapters",
+        "external integration adapters",
+        "generated artifact writers",
+        "bounded glue that does not become the canonical engine"
+      ]
+    },
+    "source_of_truth_policy": [
+      "tools/contracts/** is the only machine-readable source of truth for Repo Operations Platform contracts",
+      "tools/generated/** is the only source of truth for generated command alias registries and projections",
+      "The zero-gap end state permits no duplicated TypeScript and Rust semantic-validator ownership",
+      "repoctl CLI plus repoctld own coordination truth; stable Bun aliases and repo-local governance skills remain client surfaces only",
+      ".git/repoctl/state.sqlite is runtime state only and must never become a handwritten contract surface"
+    ],
+    "convergence_policy": {
+      "breaking_changes_allowed": true,
+      "deprecations_allowed": true,
+      "redesigns_allowed": true,
+      "full_replacements_allowed": true,
+      "must_not_prioritize": [
+        "implementation cost",
+        "implementation effort",
+        "backward compatibility",
+        "incremental migration",
+        "dual-read and dual-write coexistence",
+        "bridge-period preservation"
+      ]
+    },
+    "zero_gap_completion_criteria": [
+      "All top-level /tools roots are declared canonical platform segments or canonical platform program roots",
+      "Repo-wide scanner and runtime engines converge on Rust as the canonical implementation where the engine_policy requires it",
+      "TypeScript entrypoints are thin adapters or generated writers only and do not own duplicated policy engines",
+      "Machine-readable Repo Operations Platform contracts live only under tools/contracts/**",
+      "Command alias projections remain generated from tools/generated/** and are not hand-owned in parallel",
+      "repoctl CLI plus repoctld are the only canonical coordination owners for task, session, bundle, worktree, doctor, and cleanup semantics",
+      "Repo-local governance skills describe repoctl CLI usage and do not mutate shared repo state directly",
+      "Stable Bun aliases remain thin adapters over repoctl and do not own coordination truth",
+      "repoctld owns the only local task/worktree/source/cleanup coordination path",
+      ".git/repoctl/state.sqlite is the only durable local coordination source of truth",
+      "Task liveness and write exclusivity derive from explicit session leases instead of worktree residue"
+    ],
+    "control_plane_contracts": {
+      "daemon_socket_contract": "tools/contracts/repoctl-rpc.contract.json",
+      "session_lease_schema": "tools/contracts/repoctl-session-lease.schema.json",
+      "coordination_digest_schema": "tools/contracts/repoctl-coordination-digest.schema.json",
+      "state_store_contract": "tools/contracts/repoctl-state-store.contract.json"
+    }
+  },
+  "current_state": {
+    "legacy_exception_paths": [],
+    "canonical_program_roots": ["tools/orchestrator", "tools/repoctl"],
+    "coordination_owner": {
+      "current_state": "repoctld owns session leases, daemon-backed task issue source/bundle resolution, control-plane reconcile/doctor/cleanup, and worktree control-plane commands; repoctl CLI is the canonical operator and agent surface, while stable Bun wrappers and repo-local governance skills only compose pure validators and generated read-model materialization over daemon-owned coordination primitives.",
+      "ideal_state": "repoctld is the single local coordination owner behind stable task/worktree operator aliases and agent clients."
+    },
+    "durable_state": {
+      "current_state": "coordination durability lives in .git/repoctl/state.sqlite for task bundles, session leases, runtime records, doctor reports, and cleanup history; branch-scoped snapshots/manifests and repo-wide catalogs are generated read models rather than writable coordination truth.",
+      "ideal_state": ".git/repoctl/state.sqlite stores the canonical durable task bundle, session lease, runtime record, doctor report, and cleanup history surfaces."
+    },
+    "lease_model": {
+      "current_state": "explicit session leases determine write exclusivity, while worktree residue and recent activity only classify cleanup safety and rescue state.",
+      "ideal_state": "explicit session leases with heartbeat, expiry, release, and quarantine semantics determine liveness and exclusivity."
+    },
+    "mixed_engine_surfaces": [
+      {
+        "family": "task/worktree governance runtime",
+        "current_state": "task/worktree clients are thin wrappers plus pure validators/read-model emitters over repoctl-owned coordination flows; no parallel client-owned coordination engine remains.",
+        "ideal_state": "task/worktree governance runtime converges on repoctld with thin client adapters only"
+      }
+    ],
+    "duplicate_semantic_contracts": []
+  },
+  "gap_inventory": [
+    {
+      "id": "legacy-top-level-platform-roots",
+      "status": "closed",
+      "current_state": "tools/orchestrator and tools/repoctl are canonical Rust program roots declared by the Repo Operations Platform topology instead of legacy exceptions.",
+      "ideal_state": "Every top-level /tools root is either a canonical platform segment or a canonical platform program root.",
+      "zero_gap_condition": "No undeclared legacy top-level /tools roots remain."
+    },
+    {
+      "id": "missing-daemon-session-lease-control-plane",
+      "status": "closed",
+      "current_state": "repoctld now owns session lease arbitration, coordination digests, and daemon-backed control-plane RPC for task/worktree/source/cleanup flows.",
+      "ideal_state": "repoctld owns task session lease arbitration, coordination digests, and local control-plane RPC behind stable aliases and agent clients.",
+      "zero_gap_condition": "The local daemon is the only live coordination owner for task/worktree/source/cleanup arbitration."
+    },
+    {
+      "id": "scattered-local-coordination-state",
+      "status": "closed",
+      "current_state": "repoctld persists task bundles, runtime records, doctor reports, and cleanup history in SQLite, and the remaining branch-scoped snapshots/manifests plus repo-wide catalogs are generated read models rather than durable coordination SoT.",
+      "ideal_state": ".git/repoctl/state.sqlite is the only durable local source of truth for daemon-owned coordination state.",
+      "zero_gap_condition": "Local coordination durability lives only in SQLite rather than in parallel file/residue surfaces."
+    },
+    {
+      "id": "worktree-driven-liveness-semantics",
+      "status": "closed",
+      "current_state": "Session leases determine liveness/exclusivity, and worktree residue or recent file activity only feed safe-cleanup versus requires-intervention classification.",
+      "ideal_state": "Active lease, released lease, expired lease, quarantined residue, safe cleanup, and requires-intervention are distinct machine-readable states.",
+      "zero_gap_condition": "Worktree residue no longer acts as the canonical liveness or exclusivity source."
+    },
+    {
+      "id": "pre-daemon-client-ownership",
+      "status": "closed",
+      "current_state": "task/worktree/source/cleanup clients, stable Bun aliases, and repo-local governance skills now act as thin adapters or pure validator/read-model emitters over repoctl-owned coordination primitives instead of parallel control-plane owners.",
+      "ideal_state": "Those surfaces are thin clients over repoctld and do not own policy or state transitions themselves.",
+      "zero_gap_condition": "No task/worktree/source/cleanup client, stable Bun alias, or repo-local governance skill remains a parallel canonical owner."
+    },
+    {
+      "id": "scanner-engine-mixed-ownership",
+      "status": "closed",
+      "current_state": "Repo-wide scanner family commands now route through repoctl or Rust canonical engines, and the remaining TypeScript check commands are explicitly bounded adapters or generated-artifact glue.",
+      "ideal_state": "Repo-wide scanner families use Rust as the canonical engine and keep TypeScript limited to thin adapters or bounded glue.",
+      "zero_gap_condition": "Repo-wide scanner families no longer rely on TypeScript as the canonical policy engine."
+    },
+    {
+      "id": "duplicate-semantic-validator-ownership",
+      "status": "closed",
+      "current_state": "Rust owns the canonical session/state/control-plane contracts, and TypeScript surfaces consume delegated runtime outputs or thin wrappers instead of re-owning the same machine validators.",
+      "ideal_state": "One canonical semantic-validator owner exists per machine contract, with the other language consuming generated or delegated artifacts instead of duplicating logic.",
+      "zero_gap_condition": "No machine contract keeps duplicated TypeScript and Rust semantic-validator ownership."
+    },
+    {
+      "id": "legacy-root-command-residency",
+      "status": "closed",
+      "current_state": "Operator-facing command aliases now route through tools/apps thin entrypoints instead of pointing directly at tools/orchestrator or tools/repoctl residency.",
+      "ideal_state": "Operator entrypoints live in tools/apps and other ownership lives in the canonical segment that matches its role.",
+      "zero_gap_condition": "Operator entrypoints and runtime helpers no longer require legacy-root residency."
+    }
+  ],
+  "completion_contract": {
+    "state": "zero-gap",
+    "open_gap_ids": []
+  }
+}
