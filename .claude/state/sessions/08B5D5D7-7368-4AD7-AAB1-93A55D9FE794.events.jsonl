@@ -1,3 +1,0 @@
-{"id":"event-000001","type":"session.start","ts":"2026-03-26T09:22:03Z","state":"initialized"}
-{"id":"event-000002","type":"session.resume","ts":"2026-03-26T09:24:55Z","state":"initialized"}
-{"id":"event-000003","type":"session.stop","ts":"2026-03-26T09:25:42Z","state":"stopped"}

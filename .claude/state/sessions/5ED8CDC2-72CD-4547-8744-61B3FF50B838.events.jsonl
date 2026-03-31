@@ -1,6 +1,0 @@
-{"type":"session.start","ts":"2026-03-27T07:56:48Z","state":"initialized","data":{"cc_session_id":"29b556dc-ea25-4197-a9ed-1fa162b08d44"}}
-{"id":"event-000001","type":"session.start","ts":"2026-03-27T07:56:48Z","state":"initialized"}
-{"id":"event-000002","type":"session.resume","ts":"2026-03-27T07:57:41Z","state":"initialized"}
-{"id":"event-000003","type":"tool.edit","ts":"2026-03-27T07:59:59Z","state":"initialized","data":{"file_path":"/Users/takagiyuuki/life-architecture/src/modules/diagnosis/DiagnosisFlow.tsx"}}
-{"id":"event-000004","type":"tool.bash","ts":"2026-03-27T08:00:14Z","state":"initialized","data":{"command":"npm run build 2>&1 | grep -E "error|Error|✓|✗|Route" | head -20"}}
-{"id":"event-000005","type":"session.stop","ts":"2026-03-27T08:00:23Z","state":"stopped"}
