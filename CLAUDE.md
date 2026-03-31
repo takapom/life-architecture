@@ -26,6 +26,33 @@
 
 ---
 
+## オーケストレーター運用ルール（MUST）
+
+### コードを直接編集しない
+
+- **コードを編集する際は、main で直接作業しない。必ず orchestrator 経由で worktree を作成して作業すること。**
+- sub-agent を使う際も同様に、main ではなく worktree で作業すること。
+- 実装着手前に、canonical な GitHub task issue を必ず用意すること。issue タイトルは `[TASK] LA-NNN: <説明>` 形式。
+- 実装ブランチは `task/<TASK_ID>-<slug>` を必須とし、issue 未登録の Task ID では実装を開始しない。
+
+### オーケストレーター起動前チェック（MUST）
+
+`orchestrator:start` を実行する前に必ず以下を確認する:
+
+1. **未コミット変更の確認**: `git status --short` で変更があればユーザーにヒアリングし、指示に従う（自動でコミット・push しない）
+2. **未 push コミットの確認**: `git log --oneline origin/main..HEAD` でローカルが先行していればユーザーに報告し、push するか確認を取る
+3. **task_type の確認**: 有効値は `feature / bugfix / refactor / ops / docs / chore`（`fix` は無効）
+
+### オーケストレーター手順
+
+詳細は `docs/orchestration-workflow.md` を参照。標準フローは以下:
+
+```
+1. task issue 作成 → 2. task-source JSON 準備 → 3. orchestrator:start → 4. 監視 → 5. orchestrator:close
+```
+
+---
+
 ## 開発ルール
 
 ### 実装前に計画を出す
