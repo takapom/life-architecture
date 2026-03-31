@@ -173,12 +173,12 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
           <h2
             style={{
               fontFamily: "var(--font-body)",
-              fontSize: "1rem",
-              fontWeight: 600,
+              fontSize: "1.125rem",
+              fontWeight: 700,
               color: "var(--color-text)",
               marginBottom: "16px",
-              paddingLeft: "10px",
-              borderLeft: "2px solid var(--color-accent)",
+              paddingLeft: "12px",
+              borderLeft: "3px solid var(--color-accent)",
             }}
           >
             アーキテクチャ図
@@ -345,12 +345,12 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
           <h2
             style={{
               fontFamily: "var(--font-body)",
-              fontSize: "1rem",
-              fontWeight: 600,
+              fontSize: "1.125rem",
+              fontWeight: 700,
               color: "var(--color-text)",
               marginBottom: "16px",
-              paddingLeft: "10px",
-              borderLeft: "2px solid var(--color-accent)",
+              paddingLeft: "12px",
+              borderLeft: "3px solid var(--color-accent)",
             }}
           >
             特性スコア
@@ -380,12 +380,12 @@ export default function ResultView({ result, diagnosis, isOwner, isLoggedIn }: P
           <h2
             style={{
               fontFamily: "var(--font-body)",
-              fontSize: "1rem",
-              fontWeight: 600,
+              fontSize: "1.125rem",
+              fontWeight: 700,
               color: "var(--color-text)",
               marginBottom: "16px",
-              paddingLeft: "10px",
-              borderLeft: "2px solid var(--color-accent)",
+              paddingLeft: "12px",
+              borderLeft: "3px solid var(--color-accent)",
             }}
           >
             診断レポート
