@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tools/contracts/repoctl-coordination-digest.schema.json",
+  "title": "Repoctl Coordination Digest",
+  "type": "object",
+  "required": ["schema_version", "task_id", "status", "holder", "recent_events", "advice"],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["granted", "denied", "observer_granted", "active", "missing"]
+    },
+    "holder": {
+      "$ref": "#/$defs/holder"
+    },
+    "recent_events": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "$ref": "#/$defs/event"
+      }
+    },
+    "advice": {
+      "$ref": "#/$defs/advice"
+    }
+  },
+  "$defs": {
+    "holder": {
+      "type": "object",
+      "required": [
+        "session_id",
+        "agent_id",
+        "phase",
+        "last_heartbeat_at",
+        "claimed_commit_units",
+        "claimed_scope_keys",
+        "claimed_hot_roots",
+        "claimed_resource_claims"
+      ],
+      "properties": {
+        "session_id": {
+          "type": "string"
+        },
+        "agent_id": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "last_heartbeat_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "claimed_commit_units": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "claimed_scope_keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "claimed_hot_roots": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "claimed_resource_claims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["resource", "mode"],
+            "properties": {
+              "resource": {
+                "type": "string"
+              },
+              "mode": {
+                "type": "string",
+                "enum": ["shared", "exclusive"]
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "event": {
+      "type": "object",
+      "required": ["kind", "created_at"],
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "summary": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "advice": {
+      "type": "object",
+      "required": ["retry_after_ms", "avoid_touching_paths"],
+      "properties": {
+        "retry_after_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "avoid_touching_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recommended_mode": {
+          "type": "string",
+          "enum": ["writer", "observer", "participant"]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "definitions": {
+    "acquire_response": {
+      "$ref": "#"
+    },
+    "status_request": {
+      "type": "object",
+      "required": ["repository", "task_id"],
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "status_response": {
+      "$ref": "#"
+    }
+  },
+  "additionalProperties": false
+}

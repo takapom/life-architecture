@@ -1,0 +1,286 @@
+name: Task
+
+description: Create an implementation task tracked by Project-v2 Kanban fields.
+
+title: "[TASK] "
+labels:
+  - task
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fill in this form completely. Board/runtime projection SoT is GitHub Project-v2 fields, and this Issue body is the canonical task-spec SoT.
+        `dag:from-issues` validates the Project-v2 board/runtime contract and the canonical task-spec sections in this Issue body (`Allowed Files`, `Acceptance Checks`, `Tests`, `Commit Units`, `Acceptance Criteria`, `Non-goals`, and RCA / impact notes) at execute preflight time.
+        Standard orchestration flow is `intake` -> `execute` -> `close`; task issue authoring belongs to intake, implementation-brief derivation belongs to operationalization, and execution-plan compilation belongs to execute.
+        Use the section prompts below as the writing contract. Keep entries concrete, reviewable, and free of ad-hoc metadata blocks. Keep Project-owned board/runtime state out of the Issue body.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Write 2-4 lines covering the change, why it matters now, and the done state.
+      placeholder: |
+        Add a writing contract for task issue bodies in the GitHub Issue form.
+        Reviewers can tell from the issue alone what to change, why the work exists, and what "done" means.
+    validations:
+      required: true
+
+  - type: textarea
+    id: background
+    attributes:
+      label: Background / Context
+      description: Link the related parent issue or incident, summarize the current gap, and explain why this work is needed now.
+      placeholder: |
+        Parent: #1234
+        Current gap: task issues use the same fields, but the expected writing style is inconsistent between authors.
+        Why now: we need more predictable issue quality before expanding orchestration usage.
+    validations:
+      required: true
+
+  - type: textarea
+    id: runtime_invariants
+    attributes:
+      label: Runtime Invariants
+      description: "List the runtime properties that must hold when this task is done. Use one line per invariant with `- INV<n>: statement`."
+      placeholder: |
+        - INV1: Trusted upstream AAL2 sessions satisfy risk_challenge routes without local step-up
+        - INV2: Untrusted upstream MFA claims do not satisfy risk_challenge routes
+    validations:
+      required: true
+
+  - type: textarea
+    id: ownership_sot
+    attributes:
+      label: Ownership / SoT
+      description: "Declare canonical owners and sources of truth. Use one line per entry with `- Owner: subject -> owner` or `- SoT: subject -> canonical source`."
+      placeholder: |
+        - Owner: access decision workflow -> processes/access-control
+        - SoT: assurance evidence -> domains/auth
+        - SoT: org policy requirements -> domains/workspace
+    validations:
+      required: true
+
+  - type: textarea
+    id: allowed_files
+    attributes:
+      label: Allowed Files
+      description: One path or glob per line. Keep scope minimal; if the write set separates cleanly, split into sibling tasks instead of widening one task. `apps/<owner>` plus another `apps/<owner>` should not stay in one task, and integration-hot paths must not be mixed with `apps/*`, `domains/*`, `packages/*`, or `processes/*` product-owner scope in the same task.
+      placeholder: |
+        - .github/ISSUE_TEMPLATE/task.yml
+        - docs/references/**/*.md
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_checks
+    attributes:
+      label: Acceptance Checks
+      description: List reviewer-runnable merge gates only. Use one command or objective check per line.
+      placeholder: |
+        - GitHub Issue form renders with the updated field descriptions and examples
+        - ruby -e 'require "yaml"; YAML.load_file(".github/ISSUE_TEMPLATE/task.yml")'
+    validations:
+      required: true
+
+  - type: textarea
+    id: tests
+    attributes:
+      label: Tests
+      description: List concrete tests for this task. Use one command/check per line; write `- None (reason)` only when no automated test applies.
+      placeholder: |
+        - ruby -e 'require "yaml"; YAML.load_file(".github/ISSUE_TEMPLATE/task.yml")'
+        - bun run check:repo-conventions
+    validations:
+      required: true
+
+  - type: textarea
+    id: non_goals
+    attributes:
+      label: Non-goals
+      description: List explicit out-of-scope items. Use `- None` only when there are no meaningful exclusions.
+      placeholder: |
+        - No changes to Project-v2 field definitions
+        - No new task types or workflow states
+    validations:
+      required: false
+
+  - type: textarea
+    id: forbidden_shortcuts
+    attributes:
+      label: Forbidden Shortcuts
+      description: List explicit shortcuts or scope escapes that this task must not use. Use one line per shortcut.
+      placeholder: |
+        - Do not ship unrelated migrations or cleanup in the same branch
+        - Do not satisfy runtime requirements with login-only checks that bypass the canonical assurance model
+    validations:
+      required: true
+
+  - type: textarea
+    id: commit_units
+    attributes:
+      label: Commit Units
+      description: "Define small, reviewable checkpoints inside one primary landable change. Use `- [ ] CU<n>: outcome`. Each non-merge PR commit must reference exactly one declared `CU<n>` via a `CU<n>:` subject prefix or `CU: CU<n>` trailer. One primary change should normally fit in `CU1`; `CU2`-`CU4` are a warning band that still requires one coherent landing / verification / rollback story, and planning 5+ `CU<n>` is a hard split signal before implementation. `Commit Units` are commit cadence only; they are not partial merge approvals."
+      placeholder: |
+        - [ ] CU1: tighten issue-form guidance for narrative sections
+        - [ ] CU2: replace default textarea values with placeholders where examples should not persist
+    validations:
+      required: true
+
+  - type: textarea
+    id: reviewer_outcomes
+    attributes:
+      label: Reviewer Outcomes
+      description: List reviewer-visible outcomes for this task. Use one line per outcome. Lead with one primary outcome. One tightly coupled supporting outcome is allowed only when it shares the same admission territory, verification plan, and rollback story; 3+ entries or multiple independent outcomes should be split into sibling tasks before implementation.
+      placeholder: |
+        - A reviewer can confirm that task sizing enforcement blocks oversized single-task scope before implementation starts
+    validations:
+      required: true
+
+  - type: textarea
+    id: task_sizing_exception
+    attributes:
+      label: Task Sizing Exception
+      description: Use `N/A` unless you want to keep optional historical planning context about why the scope was discussed as one task. This field never overrides task sizing hard failures.
+      placeholder: |
+        N/A
+        
+        or
+        
+        This scope keeps 8 planned commit units because splitting API ingress, persistence, and worker rollout would publish an intermediate contract that violates INV2 on main.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: task_sizing_exception_type
+    attributes:
+      label: Task Sizing Exception Type
+      description: Use `N/A` unless you want to keep optional structured context alongside `Task Sizing Exception`. This field never overrides task sizing hard failures.
+      options:
+        - N/A
+        - unsafe-intermediate-state
+        - runtime-invariant
+        - atomic-contract-migration
+    validations:
+      required: true
+
+  - type: textarea
+    id: task_sizing_split_failure
+    attributes:
+      label: Task Sizing Split Failure
+      description: Use `N/A` unless you want to keep optional context about where a split discussion broke down. Task sizing certification does not require this field and does not treat it as an override.
+      placeholder: |
+        N/A
+
+        or
+
+        Splitting producer and consumer rollout into sibling tasks would merge the new contract on main before the dependent runtime lane can switch in the same release boundary.
+    validations:
+      required: true
+
+  - type: textarea
+    id: task_sizing_exception_reviewer_attestation
+    attributes:
+      label: Task Sizing Exception Reviewer Attestation
+      description: Use `N/A` unless you want optional reviewer context for task-planning discussion. Task sizing certification does not require this field and does not treat it as an override.
+      placeholder: |
+        N/A
+
+        or
+
+        Reviewed by @owner on 2026-03-13: splitting this scope would publish an unsafe mainline state, so the exception is accepted as a single indivisible task.
+    validations:
+      required: true
+
+  - type: textarea
+    id: task_sizing_unsafe_state
+    attributes:
+      label: Task Sizing Unsafe State
+      description: Use `N/A` unless you want to keep optional context about an unsafe intermediate state. This field does not override task sizing hard failures.
+      placeholder: |
+        N/A
+
+        or
+
+        API routes would publish the new contract to main before worker consumers are deployed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: task_sizing_affected_invariant
+    attributes:
+      label: Task Sizing Affected Invariant
+      description: Use `N/A` unless you want to keep optional context about an affected invariant.
+      placeholder: |
+        N/A
+
+        or
+
+        INV2: execute must fail closed unless both producer and consumer surface the same task-sizing metadata.
+    validations:
+      required: true
+
+  - type: textarea
+    id: task_sizing_atomic_boundary
+    attributes:
+      label: Task Sizing Atomic Boundary
+      description: Use `N/A` unless you want to keep optional context about an atomic contract boundary.
+      placeholder: |
+        N/A
+
+        or
+
+        The task issue body schema and Project-v2 projection must cut over in one merge.
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        After creating the Issue, set the Project-owned fields in GitHub:
+        - Keep `Task ID`, `Task Type`, `Priority`, and `Status` in Project-v2 board fields only.
+        - Keep execution dependencies in the Project `Dependencies` field (Task ID list).
+        - Keep runtime claim state in Project fields (`Claimed By`, `Run ID`, `Lease Expires At`, `PR URL`, `Failure Reason`, `Updated At`).
+        - Link this task issue to a Parent issue only when the scope is intentionally decomposed into sibling task issues.
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: "List reviewer-observable pass conditions only. Use `- [ ]` and avoid implementation detail. `Reviewer Outcomes` should lead with one primary outcome; a tightly coupled supporting outcome is acceptable, but independent outcomes belong in sibling tasks."
+      placeholder: |
+        - [ ] Task issue authors can see how each narrative field should be written from the form alone
+        - [ ] Example text does not persist into created issues unless the author intentionally keeps it
+    validations:
+      required: true
+
+  - type: textarea
+    id: proof_tests
+    attributes:
+      label: Proof Tests
+      description: "Map runtime invariants to executable proof. Use one line per proof test with `- PT<n>: statement -> command/check | proves INV1, INV2`."
+      placeholder: |
+        - PT1: Trusted upstream AAL2 session is allowed through risk_challenge route -> bun test apps/api/... | proves INV1
+        - PT2: Untrusted upstream MFA claim is denied on the same route -> bun test apps/api/... | proves INV2
+    validations:
+      required: true
+
+  - type: textarea
+    id: rca_scope
+    attributes:
+      label: RCA / Impact Scope (required for bugfix)
+      description: For bugfix, fill every section. For non-bugfix, enter `N/A`.
+      placeholder: |
+        Reproduction:
+        - Trigger / preconditions:
+        - Observed failure:
+        Root cause:
+        - Why the failure happened:
+        Why detection missed:
+        - Which guardrail was missing or insufficient:
+        Impact scope:
+        - Affected surface / users / environments:
+        Prevention:
+        - Regression test or guardrail to add:
+    validations:
+      required: true

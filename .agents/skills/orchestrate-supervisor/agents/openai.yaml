@@ -1,0 +1,6 @@
+interface:
+  display_name: "Orchestrate Supervisor"
+  short_description: "Route one orchestration request to intake, execute, close, or resume."
+  default_prompt: "Use $orchestrate-supervisor to choose intake, execute, close, or resume from GitHub task state and session artifacts, then delegate to the canonical phase runtime."
+policy:
+  allow_implicit_invocation: false

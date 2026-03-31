@@ -1,0 +1,475 @@
+{
+  "schema_version": 1,
+  "contract_id": "repoctl-state-store",
+  "owner": "repo-operations-platform",
+  "engine": {
+    "kind": "sqlite",
+    "path": ".git/repoctl/state.sqlite",
+    "journal_mode": "WAL",
+    "transaction_mode": "BEGIN IMMEDIATE"
+  },
+  "tables": [
+    {
+      "name": "task_bundles",
+      "role": "durable task issue source, bundle freshness, and overlay provenance"
+    },
+    {
+      "name": "task_issue_sources",
+      "role": "durable canonical task issue source provenance"
+    },
+    {
+      "name": "task_sessions",
+      "role": "explicit writer/observer/participant session leases"
+    },
+    {
+      "name": "task_session_heartbeats",
+      "role": "lease liveness and phase updates"
+    },
+    {
+      "name": "task_events",
+      "role": "bounded recent coordination events and operator digests"
+    },
+    {
+      "name": "runtime_records",
+      "role": "desired and observed worktree/runtime state"
+    },
+    {
+      "name": "doctor_reports",
+      "role": "stable diagnosis and remediation records"
+    },
+    {
+      "name": "cleanup_runs",
+      "role": "safe-auto-cleanup and quarantine history"
+    }
+  ],
+  "canonical_cli_surface": {
+    "bundle_freshness": "omta-repoctl task-bundle ensure",
+    "issue_source": ["omta-repoctl task-issue source", "omta-repoctl task-issue bundle"],
+    "state_reconcile": "omta-repoctl reconcile",
+    "doctor": "omta-repoctl doctor report",
+    "cleanup": ["omta-repoctl cleanup report", "omta-repoctl cleanup apply"],
+    "worktree": [
+      "omta-repoctl worktree recover-existing-path",
+      "omta-repoctl worktree delete-main-equal-stale-branch",
+      "omta-repoctl worktree reconcile",
+      "omta-repoctl worktree cleanup"
+    ]
+  },
+  "definitions": {
+    "empty_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {}
+    },
+    "task_issue_source_request": {
+      "type": "object",
+      "properties": {
+        "source_path": {
+          "type": "string"
+        }
+      }
+    },
+    "task_issue_source_record": {
+      "type": "object",
+      "required": ["generated_at", "source_path", "source_resolution"],
+      "properties": {
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source_path": {
+          "type": "string"
+        },
+        "source_resolution": {
+          "type": "string"
+        }
+      }
+    },
+    "task_issue_bundle_request": {
+      "type": "object",
+      "required": ["repository", "state", "overlay_requests"],
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string",
+          "enum": ["open", "all"]
+        },
+        "source_path": {
+          "type": "string"
+        },
+        "overlay_requests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["task_id"],
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "issue_number": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "task_issue_bundle_record": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "generated_at",
+        "repository",
+        "source_mode",
+        "source_path",
+        "source_resolution",
+        "state",
+        "overlay_requests",
+        "issues"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "integer"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "source_mode": {
+          "type": "string"
+        },
+        "source_path": {
+          "type": "string"
+        },
+        "source_resolution": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "overlay_requests": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "task_bundle_request": {
+      "type": "object",
+      "required": ["repository", "task_id"],
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "source_path": {
+          "type": "string"
+        }
+      }
+    },
+    "task_bundle_record": {
+      "type": "object",
+      "required": ["task_id", "source_mode", "source_path", "source_resolution", "generated_at"],
+      "properties": {
+        "issue": {
+          "type": "object"
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "source_mode": {
+          "type": "string"
+        },
+        "source_path": {
+          "type": "string"
+        },
+        "source_resolution": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "control_plane_bundle_record": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "repo_root",
+        "git_common_dir",
+        "canonical_main_worktree",
+        "canonical_task_root",
+        "observed_at",
+        "state_fingerprint",
+        "paths",
+        "summary",
+        "tasks"
+      ],
+      "properties": {
+        "schema_version": { "type": "integer" },
+        "repo_root": { "type": "string" },
+        "git_common_dir": { "type": "string" },
+        "canonical_main_worktree": { "type": "string" },
+        "canonical_task_root": { "type": "string" },
+        "observed_at": { "type": "string", "format": "date-time" },
+        "state_fingerprint": { "type": "string" },
+        "paths": { "type": "object" },
+        "summary": { "type": "object" },
+        "tasks": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    "control_plane_reconcile_record": {
+      "type": "object",
+      "required": ["ok", "state_fingerprint", "state_store_path", "task_count"],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "state_fingerprint": { "type": "string" },
+        "state_store_path": { "type": "string" },
+        "task_count": { "type": "integer" }
+      }
+    },
+    "reconcile_request": {
+      "type": "object",
+      "required": ["repository", "task_id", "branch", "worktree_path"],
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "worktree_path": {
+          "type": "string"
+        }
+      }
+    },
+    "reconcile_record": {
+      "type": "object",
+      "required": ["task_id", "branch", "worktree_path", "phase", "status"],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "worktree_path": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "control_plane_doctor_record": {
+      "type": "object",
+      "required": [
+        "findings",
+        "live_fingerprint",
+        "ok",
+        "reconcile_command",
+        "state_store_path",
+        "status",
+        "stored_fingerprint"
+      ],
+      "properties": {
+        "findings": { "type": "array", "items": { "type": "string" } },
+        "live_fingerprint": { "type": "string" },
+        "ok": { "type": "boolean" },
+        "reconcile_command": { "type": "string" },
+        "state_store_path": { "type": "string" },
+        "status": { "type": "string" },
+        "stored_fingerprint": { "type": "string" }
+      }
+    },
+    "doctor_request": {
+      "type": "object",
+      "required": ["repository"],
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        }
+      }
+    },
+    "doctor_record": {
+      "type": "object",
+      "required": ["generated_at", "violations"],
+      "properties": {
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "violations": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "cleanup_apply_request": {
+      "type": "object",
+      "required": ["apply"],
+      "properties": {
+        "apply": {
+          "type": "boolean"
+        }
+      }
+    },
+    "control_plane_cleanup_record": {
+      "type": "object",
+      "required": ["apply", "ok", "removed", "state_store_path", "status"],
+      "properties": {
+        "apply": { "type": "boolean" },
+        "ok": { "type": "boolean" },
+        "removed": { "type": "boolean" },
+        "state_store_path": { "type": "string" },
+        "status": { "type": "string" }
+      }
+    },
+    "cleanup_request": {
+      "type": "object",
+      "required": ["repository", "mode"],
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["safe-auto-cleanup"]
+        }
+      }
+    },
+    "cleanup_record": {
+      "type": "object",
+      "required": ["generated_at", "mode", "applied_candidates"],
+      "properties": {
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "mode": {
+          "type": "string"
+        },
+        "applied_candidates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "worktree_recover_request": {
+      "type": "object",
+      "required": ["task_id", "worktree_path"],
+      "properties": {
+        "task_id": { "type": "string" },
+        "worktree_path": { "type": "string" }
+      }
+    },
+    "worktree_recover_record": {
+      "type": "object",
+      "required": [
+        "archive_path",
+        "deleted_local_branch",
+        "ok",
+        "registered_branch",
+        "status",
+        "task_id",
+        "worktree_path"
+      ],
+      "properties": {
+        "archive_path": { "type": "string" },
+        "deleted_local_branch": { "type": "boolean" },
+        "ok": { "type": "boolean" },
+        "registered_branch": { "type": "string" },
+        "status": { "type": "string" },
+        "task_id": { "type": "string" },
+        "worktree_path": { "type": "string" }
+      }
+    },
+    "worktree_delete_main_equal_stale_branch_request": {
+      "type": "object",
+      "required": ["branch", "main_worktree"],
+      "properties": {
+        "branch": { "type": "string" },
+        "main_worktree": { "type": "string" }
+      }
+    },
+    "worktree_delete_main_equal_stale_branch_record": {
+      "type": "object",
+      "required": ["ok", "branch", "branch_head", "deleted", "main_head"],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "branch": { "type": "string" },
+        "branch_head": { "type": "string" },
+        "deleted": { "type": "boolean" },
+        "main_head": { "type": "string" }
+      }
+    },
+    "worktree_cleanup_request": {
+      "type": "object",
+      "required": ["branch", "worktree_path"],
+      "properties": {
+        "branch": { "type": "string" },
+        "worktree_path": { "type": "string" }
+      }
+    },
+    "worktree_cleanup_record": {
+      "type": "object",
+      "required": [
+        "branch",
+        "deleted_local_branch",
+        "ok",
+        "pruned",
+        "removed_filesystem_residue",
+        "removed_registered_worktree",
+        "worktree_path"
+      ],
+      "properties": {
+        "branch": { "type": "string" },
+        "deleted_local_branch": { "type": "boolean" },
+        "ok": { "type": "boolean" },
+        "pruned": { "type": "boolean" },
+        "removed_filesystem_residue": { "type": "boolean" },
+        "removed_registered_worktree": { "type": "boolean" },
+        "worktree_path": { "type": "string" }
+      }
+    }
+  },
+  "fail_closed_rules": [
+    "Every durable coordination mutation must transit the SQLite contract rather than ad hoc sidecar files",
+    "Quarantined residue is preserved for intervention but is not itself an active writer lease",
+    "safe-auto-cleanup may apply only to doctor-classified safe candidates"
+  ]
+}

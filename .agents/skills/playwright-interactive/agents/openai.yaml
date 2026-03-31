@@ -1,0 +1,4 @@
+interface:
+  display_name: "Playwright Interactive"
+  short_description: "Persistent js_repl Playwright UI QA for web and Electron."
+  default_prompt: "Use $playwright-interactive to keep a persistent Playwright session alive while debugging a local web or Electron UI."

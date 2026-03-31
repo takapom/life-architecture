@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "contract_id": "repoctl-rpc",
+  "owner": "repo-operations-platform",
+  "transport": {
+    "kind": "local-ipc",
+    "socket_path": ".git/r.sock",
+    "auto_spawn": true,
+    "public_network_access": false
+  },
+  "durable_state": {
+    "kind": "sqlite",
+    "path": ".git/repoctl/state.sqlite"
+  },
+  "canonical_cli_surface": {
+    "task": [
+      "omta-repoctl task session acquire",
+      "omta-repoctl task session heartbeat",
+      "omta-repoctl task session release",
+      "omta-repoctl task status"
+    ],
+    "task_bundle": [
+      "omta-repoctl task-bundle ensure",
+      "omta-repoctl task-issue source",
+      "omta-repoctl task-issue bundle"
+    ],
+    "stateful_operations": [
+      "omta-repoctl reconcile",
+      "omta-repoctl doctor report",
+      "omta-repoctl cleanup report",
+      "omta-repoctl cleanup apply",
+      "omta-repoctl worktree recover-existing-path",
+      "omta-repoctl worktree reconcile",
+      "omta-repoctl worktree cleanup"
+    ]
+  },
+  "methods": [
+    {
+      "name": "task.session.acquire",
+      "request_schema": "tools/contracts/repoctl-session-lease.schema.json#/definitions/acquire_request",
+      "response_schema": "tools/contracts/repoctl-coordination-digest.schema.json#/definitions/acquire_response"
+    },
+    {
+      "name": "task.session.heartbeat",
+      "request_schema": "tools/contracts/repoctl-session-lease.schema.json#/definitions/heartbeat_request",
+      "response_schema": "tools/contracts/repoctl-session-lease.schema.json#/definitions/lease_record"
+    },
+    {
+      "name": "task.session.release",
+      "request_schema": "tools/contracts/repoctl-session-lease.schema.json#/definitions/release_request",
+      "response_schema": "tools/contracts/repoctl-session-lease.schema.json#/definitions/release_response"
+    },
+    {
+      "name": "task.status",
+      "request_schema": "tools/contracts/repoctl-coordination-digest.schema.json#/definitions/status_request",
+      "response_schema": "tools/contracts/repoctl-coordination-digest.schema.json#/definitions/status_response"
+    },
+    {
+      "name": "control_plane.bundle",
+      "request_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/empty_request",
+      "response_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/control_plane_bundle_record"
+    },
+    {
+      "name": "task.issue.source",
+      "request_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/task_issue_source_request",
+      "response_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/task_issue_source_record"
+    },
+    {
+      "name": "task.issue.bundle",
+      "request_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/task_issue_bundle_request",
+      "response_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/task_issue_bundle_record"
+    },
+    {
+      "name": "task.issue.ensure",
+      "request_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/task_bundle_request",
+      "response_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/task_bundle_record"
+    },
+    {
+      "name": "control_plane.reconcile",
+      "request_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/empty_request",
+      "response_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/control_plane_reconcile_record"
+    },
+    {
+      "name": "doctor.report",
+      "request_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/empty_request",
+      "response_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/control_plane_doctor_record"
+    },
+    {
+      "name": "cleanup.report",
+      "request_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/cleanup_apply_request",
+      "response_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/control_plane_cleanup_record"
+    },
+    {
+      "name": "cleanup.apply",
+      "request_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/cleanup_apply_request",
+      "response_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/control_plane_cleanup_record"
+    },
+    {
+      "name": "worktree.recover-existing-path",
+      "request_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/worktree_recover_request",
+      "response_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/worktree_recover_record"
+    },
+    {
+      "name": "worktree.delete-main-equal-stale-branch",
+      "request_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/worktree_delete_main_equal_stale_branch_request",
+      "response_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/worktree_delete_main_equal_stale_branch_record"
+    },
+    {
+      "name": "worktree.reconcile",
+      "request_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/reconcile_request",
+      "response_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/reconcile_record"
+    },
+    {
+      "name": "worktree.cleanup",
+      "request_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/worktree_cleanup_request",
+      "response_schema": "tools/contracts/repoctl-state-store.contract.json#/definitions/worktree_cleanup_record"
+    }
+  ],
+  "fail_closed_rules": [
+    "task/worktree/source/cleanup clients must not bypass repoctld when the socket or SQLite contract is unavailable",
+    "writer exclusivity is determined by active session leases rather than worktree residue",
+    "coordination digest payloads may expose holder, phase, lease timing, claimed scope, and recent events but must not expose raw diff, full prompt, or secret-bearing logs"
+  ]
+}
